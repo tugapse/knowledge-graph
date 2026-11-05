@@ -170,7 +170,6 @@ function syncFloatingLabels() {
         let sumX = 0, sumY = 0, sumZ = 0;
 
         nodes.forEach(n => {
-            debugger
             if (typeof n.x === 'number') {
                 sumX += n.x; sumY += n.y; sumZ += n.z;
                 validCount++;

@@ -4,6 +4,7 @@ import os
 import json
 import argparse
 import http.server
+import mimetypes
 import socketserver
 import webbrowser
 from pathlib import Path
@@ -18,41 +19,57 @@ NC = "\033[0m"
 
 def canonical_key(path_or_import: str) -> str:
     """Transforma qualquer formato de caminho ou import Python numa chave canónica única.
+    Assumimos que a raiz real do código da aplicação é src/.
     Exemplos:
       - 'ai.tools' -> 'ai/tools'
-      - '/src/ai/tools/__init__.py' -> 'ai/tools'
+      - '/site/src/ai/tools/__init__.py' -> 'ai/tools'
       - 'src/ai/tools/agent_tools.py' -> 'ai/tools/agent_tools'
       - '.KnowledgeGraph/ai/tools.json' -> 'ai/tools'
     """
     if not path_or_import:
         return ""
-    
-    # 1. Normalizar separadores e retirar tags de símbolos (#classe, ::func)
-    clean = path_or_import.split("#")[0].split("::")[0].strip()
-    clean = clean.replace("\\", "/").strip("/")
 
-    # 2. Remover prefixos habituais de raiz e cache
-    for prefix in [".KnowledgeGraph/", "KnowledgeGraph/", "src/"]:
+    clean = path_or_import.split("#")[0].split("::")[0].strip()
+    clean = clean.replace("\\", "/").strip()
+    clean = clean.lstrip("./")
+    clean = clean.strip("/")
+
+    # 1. Normalizar qualquer prefixo que não seja a raiz real do código
+    for prefix in [".KnowledgeGraph/", "KnowledgeGraph/", "site/", "site/src/", "src/"]:
+        if clean == prefix.rstrip("/"):
+            return ""
         if clean.startswith(prefix):
             clean = clean[len(prefix):]
+            break
+
+    clean = clean.strip("/")
+
+    # 2. Se o caminho vier vindo de /src/... e não foi removido acima, trata-se da raiz de origem
+    if clean.startswith("src/"):
+        clean = clean[len("src/"):]
 
     # 3. Remover extensões de ficheiro
     for ext in [".py", ".json", ".md"]:
         if clean.endswith(ext):
             clean = clean[:-len(ext)]
 
-    # 4. Converter sintaxe de import Python de pontos para barras (ex: ai.tools -> ai/tools)
+    # 4. Converter sintaxe de import Python de pontos para barras
     if "/" not in clean and "." in clean:
         clean = clean.replace(".", "/")
 
-    # 5. Se apontar para __init__, normaliza para a pasta pai (ex: ai/tools/__init__ -> ai/tools)
+    # 5. Se apontar para __init__, normaliza para a pasta pai
     if clean.endswith("/__init__") or clean == "__init__":
         clean = clean[:-9] if clean.endswith("/__init__") else ""
 
     return clean.strip("/")
 
 def extract_subsystem_group(canonical_id: str) -> str:
-    parts = Path(canonical_id).parts
+    clean_id = canonical_id.strip("/")
+    if not clean_id:
+        return "CORE"
+
+    # Quando a raiz do código é src/, o caminho real começa no primeiro segmento abaixo de src
+    parts = Path(clean_id).parts
     if len(parts) >= 2:
         return parts[1].upper() if parts[0] == "ai" else parts[0].upper()
     elif len(parts) == 1 and parts[0]:
@@ -278,6 +295,7 @@ def load_graph_data(knowledge_dir: str, docs_dir: str = None) -> dict:
 def build_production_bundle(knowledge_dir: str, docs_dir: str, output_dir: str):
     out_path = Path(output_dir)
     out_path.mkdir(parents=True, exist_ok=True)
+    src_dir = Path(__file__).parent / "src"
 
     print(f"\n{CYAN}=== A COMPILAR PROD BUILD ESTÁTICO ==={NC}")
     graph_data = load_graph_data(knowledge_dir, docs_dir)
@@ -287,27 +305,29 @@ def build_production_bundle(knowledge_dir: str, docs_dir: str, output_dir: str):
         json.dump(graph_data, f, ensure_ascii=False)
     print(f"{GREEN}[OK]{NC} Gravado {json_dest}")
 
-    src_html = Path(__file__).parent / "index.html"
-    if not src_html.exists():
-        print(f"{RED}[Erro]{NC} index.html não encontrado.")
+    if not src_dir.exists():
+        print(f"{RED}[Erro]{NC} diretório src/ não encontrado.")
         sys.exit(1)
 
-    dst_html = out_path / "index.html"
-    shutil.copy(src_html, dst_html)
-    print(f"{GREEN}[OK]{NC} Gravado {dst_html}")
+    for asset in src_dir.iterdir():
+        if asset.is_file():
+            shutil.copy2(asset, out_path / asset.name)
+            print(f"{GREEN}[OK]{NC} Gravado {out_path / asset.name}")
+
     print(f"\n{GREEN}✔ Build concluído com sucesso em: {out_path.resolve()}{NC}")
 
 class VisualizerHandler(http.server.SimpleHTTPRequestHandler):
     knowledge_dir = "."
     docs_dir = None
+    source_dir = Path(__file__).parent / "src"
 
     def do_GET(self):
         if self.path in ('/', '/index.html'):
             self.send_response(200)
             self.send_header("Content-type", "text/html; charset=utf-8")
             self.end_headers()
-            
-            html_file = Path(__file__).parent / "index.html"
+
+            html_file = self.source_dir / "index.html"
             if html_file.exists():
                 self.wfile.write(html_file.read_bytes())
             else:
@@ -316,10 +336,19 @@ class VisualizerHandler(http.server.SimpleHTTPRequestHandler):
             self.send_response(200)
             self.send_header("Content-type", "application/json; charset=utf-8")
             self.end_headers()
-            
+
             graph_data = load_graph_data(self.knowledge_dir, self.docs_dir)
             self.wfile.write(json.dumps(graph_data).encode("utf-8"))
         else:
+            rel_path = self.path.lstrip("/")
+            asset_path = self.source_dir / rel_path
+            if rel_path and asset_path.exists() and asset_path.is_file():
+                mime_type, _ = mimetypes.guess_type(str(asset_path))
+                self.send_response(200)
+                self.send_header("Content-type", mime_type or "application/octet-stream")
+                self.end_headers()
+                self.wfile.write(asset_path.read_bytes())
+                return
             super().do_GET()
 
 def parse_arguments():

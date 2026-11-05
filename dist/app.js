@@ -1,6 +1,116 @@
 const isStaticHost = window.location.pathname.endsWith('.html') || window.location.protocol === 'file:';
 const primaryUrl = isStaticHost ? './data.json' : 'data.json';
 
+function canonicalizeNodeReference(value) {
+    if (!value) return '';
+    let clean = String(value).split('#')[0].split('::')[0].trim();
+    clean = clean.replace(/\\/g, '/');
+    clean = clean.replace(/^https?:\/\/[^/]+/i, '');
+    clean = clean.replace(/^\/+/, '');
+    clean = clean.replace(/^\.?\.?\//, '');
+    clean = clean.replace(/\.(py|json|md)$/i, '');
+    clean = clean.replace(/\/index$/, '');
+    if (clean.startsWith('src/')) clean = clean.slice(4);
+    if (clean.startsWith('AgentDocs/')) clean = clean.slice('AgentDocs/'.length);
+    if (clean.startsWith('KnowledgeGraph/')) clean = clean.slice('KnowledgeGraph/'.length);
+    clean = clean.replace(/\.(?=[A-Za-z0-9])/g, '/');
+    clean = clean.replace(/\s+/g, '');
+    clean = clean.replace(/(^|\/)(__init__|index)$/, '$1');
+    clean = clean.replace(/\/+/g, '/');
+    return clean.replace(/^\//, '').replace(/\/$/, '');
+}
+
+function resolveMarkdownLinkTarget(href, text) {
+    if (!window.graphDataGlobal || !Array.isArray(window.graphDataGlobal.nodes)) return null;
+
+    const refs = [];
+    if (href) refs.push(href);
+    if (text) refs.push(text);
+
+    const normalizedRefs = refs
+        .map(value => canonicalizeNodeReference(value))
+        .filter(Boolean)
+        .map(value => value.toLowerCase());
+
+    const anchorText = (text || '').trim();
+    const anchorWordSet = anchorText
+        ? anchorText.toLowerCase().replace(/[_\-\s]+/g, '').split(/[^A-Za-z0-9]+/).filter(Boolean)
+        : [];
+
+    for (const node of window.graphDataGlobal.nodes) {
+        const nodeId = String(node.id || '').toLowerCase();
+        const nodeName = String(node.name || node.id || '').toLowerCase();
+        const idBasename = nodeId.split('/').pop();
+        const nameBasename = nodeName.split('/').pop();
+
+        const matches = normalizedRefs.some(ref => {
+            if (!ref) return false;
+            if (ref === nodeId || ref === nodeName) return true;
+            if (ref === idBasename || ref === nameBasename) return true;
+            if (ref.endsWith('/' + nodeId) || ref.endsWith('/' + idBasename)) return true;
+            if (nodeId.includes(ref) || nodeName.includes(ref)) return true;
+            return false;
+        });
+
+        if (matches) return node;
+
+        const nameMatchesText = anchorText && (
+            nodeName.includes(anchorText.toLowerCase()) ||
+            nodeId.includes(anchorText.toLowerCase()) ||
+            anchorWordSet.some(word => nodeName.includes(word) || idBasename.includes(word))
+        );
+        if (nameMatchesText) return node;
+    }
+
+    return null;
+}
+
+function bindMarkdownLinkHandlers(container) {
+    if (!container) return;
+
+    container.querySelectorAll('a').forEach(anchor => {
+        anchor.setAttribute('target', '_self');
+        anchor.addEventListener('click', (event) => {
+            const href = anchor.getAttribute('href') || '';
+            const text = anchor.textContent || '';
+            const match = resolveMarkdownLinkTarget(href, text);
+
+            if (match) {
+                event.preventDefault();
+                event.stopPropagation();
+                focusNodeById(match.id);
+            }
+        });
+    });
+}
+
+function resetInspectorScroll() {
+    const panel = document.getElementById('info-panel');
+    if (panel) panel.scrollTop = 0;
+}
+
+function cameraPositionForInspector(node, distance) {
+    if (!node || !window.Graph) return;
+
+    const panel = document.getElementById('info-panel');
+    const inspectorOpen = panel && !panel.classList.contains('is-collapsed');
+    const panelWidth = inspectorOpen ? Math.min(panel.offsetWidth || 420, 560) : 0;
+    const horizontalShift = inspectorOpen ? -(panelWidth * 1.35) : 0;
+    const distRatio = 1 + distance / Math.hypot(node.x, node.y, node.z);
+    const cameraPos = {
+        x: node.x * distRatio + horizontalShift,
+        y: node.y * distRatio,
+        z: node.z * distRatio
+    };
+    const targetPos = {
+        x: node.x + horizontalShift * 0.15,
+        y: node.y,
+        z: node.z
+    };
+
+    window.Graph.cameraPosition(cameraPos, targetPos, 1200);
+}
+
 fetch(primaryUrl)
     .then(res => {
         if (!res.ok) throw new Error('data.json not found, falling back to /api/data');
@@ -124,6 +234,7 @@ fetch(primaryUrl)
                 window.highlightNodes.clear();
                 window.highlightLinks.clear();
                 window.searchMatchingNodes.clear();
+                resetInspectorScroll();
 
                 const container = document.getElementById('hud-labels-layer');
                 container.querySelectorAll('.hud-floating-pill').forEach(el => el.remove());
@@ -152,17 +263,12 @@ fetch(primaryUrl)
                     });
 
                     const distance = 320;
-                    const distRatio = 1 + distance / Math.hypot(node.x, node.y, node.z);
-                    window.Graph.cameraPosition(
-                        { x: node.x * distRatio, y: node.y * distRatio, z: node.z * distRatio },
-                        node,
-                        1200
-                    );
-
+                    cameraPositionForInspector(node, distance);
                     animateToSelection(1.0);
                 }
 
                 setInspectorCollapsed(false);
+                resetInspectorScroll();
                 document.getElementById('panel-title').innerText = node.name || 'COMPONENT';
 
                 let specsHtml = `<div class="property"><span class="prop-title">IDENTIFIER / PATH</span><strong style="color: #fff; word-break: break-all; font-family: 'JetBrains Mono', monospace; font-size: 11px;">${node.id}</strong></div>`;
@@ -210,9 +316,13 @@ fetch(primaryUrl)
                 document.getElementById('doc-details').innerHTML = docHtml;
 
                 if (node.raw_markdown && typeof marked !== 'undefined') {
-                    document.getElementById('raw-details').innerHTML = `<div class="markdown-rendered">${marked.parse(node.raw_markdown)}</div>`;
+                    const rawDetails = document.getElementById('raw-details');
+                    rawDetails.innerHTML = `<div class="markdown-rendered">${marked.parse(node.raw_markdown)}</div>`;
+                    bindMarkdownLinkHandlers(rawDetails);
                 } else if (node.raw_markdown) {
-                    document.getElementById('raw-details').innerText = node.raw_markdown;
+                    const rawDetails = document.getElementById('raw-details');
+                    rawDetails.innerText = node.raw_markdown;
+                    bindMarkdownLinkHandlers(rawDetails);
                 } else {
                     document.getElementById('raw-details').innerHTML = '<p style="color: #64748b; font-style: italic; font-size: 13px;">No documentation file linked to this component.</p>';
                 }

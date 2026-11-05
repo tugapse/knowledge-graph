@@ -22,6 +22,9 @@ function setInspectorCollapsed(collapsed) {
     if (!panel || !toggle) return;
 
     panel.classList.toggle('is-collapsed', collapsed);
+    if (!collapsed) {
+        panel.scrollTop = 0;
+    }
     toggle.textContent = collapsed ? 'SHOW' : 'HIDE';
     toggle.setAttribute('aria-expanded', String(!collapsed));
     toggle.setAttribute('aria-label', collapsed ? 'Show component inspector' : 'Hide component inspector');
