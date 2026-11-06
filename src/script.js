@@ -118,24 +118,59 @@ function getLinkBaseColor(link) {
     return { r: 0, g: 240, b: 255 };
 }
 
+function normalizeSubsystemName(node) {
+    if (!node) return 'CORE';
+
+    const raw = String(node.subsystem || node.group || 'CORE').trim();
+    if (!raw) return 'CORE';
+
+    const normalized = raw.toUpperCase();
+    if (['CORE', 'THIS', 'INDEX', 'DOCUMENT', 'UUID', 'VEC3', 'NAVIGATOR', 'ENGINE'].includes(normalized)) {
+        return 'CORE';
+    }
+
+    if (node.group === 'External/Dependency' && node.id) {
+        const parts = String(node.id).split('/').filter(Boolean);
+        if (parts.length > 1 && parts[0] && parts[0].toUpperCase() !== 'SRC') {
+            return parts[0].toUpperCase();
+        }
+    }
+
+    return normalized;
+}
+
 function buildClusterGroups(nodes) {
     clusterGroups = {};
-    nodes.forEach(node => {
-        if (node.group === 'External/Dependency') {
-            node.subsystem = 'EXTERNAL';
-        } else if (!node.subsystem) {
-            node.subsystem = 'CORE';
-        }
+    const grouped = {};
 
-        const groupName = node.subsystem;
-        if (!clusterGroups[groupName]) {
-            clusterGroups[groupName] = [];
+    nodes.forEach(node => {
+        const normalizedSubsystem = normalizeSubsystemName(node);
+        node.subsystem = normalizedSubsystem;
+
+        if (!grouped[normalizedSubsystem]) {
+            grouped[normalizedSubsystem] = [];
         }
-        clusterGroups[groupName].push(node);
+        grouped[normalizedSubsystem].push(node);
     });
 
-    Object.keys(clusterGroups).forEach(k => {
-        if (clusterGroups[k].length < 4) delete clusterGroups[k];
+    const minClusterSize = 2;
+    Object.entries(grouped).forEach(([name, items]) => {
+        if (items.length >= minClusterSize) {
+            clusterGroups[name] = items;
+            return;
+        }
+
+        let bucket = 'CORE';
+        const firstNodeId = items[0] && items[0].id ? String(items[0].id) : '';
+        const parts = firstNodeId.split('/').filter(Boolean);
+        if (parts.length > 1 && parts[0] && parts[0].toUpperCase() !== 'SRC') {
+            bucket = parts[0].toUpperCase();
+        }
+
+        if (!clusterGroups[bucket]) {
+            clusterGroups[bucket] = [];
+        }
+        clusterGroups[bucket].push(...items);
     });
 
     const groupKeys = Object.keys(clusterGroups);
