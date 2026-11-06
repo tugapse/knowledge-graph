@@ -138,6 +138,7 @@ function clearSelection() {
     }
 
     window.focusedNode = null;
+    window.inspectorCurrentNode = null;
     window.highlightNodes.clear();
     window.highlightLinks.clear();
     window.searchMatchingNodes.clear();
@@ -151,6 +152,7 @@ function clearSelection() {
     document.getElementById('node-details').innerHTML = '<p style="color: #64748b; font-style: italic; font-size: 13px;">Select a node in the graph to view technical specifications and memory context.</p>';
     document.getElementById('doc-details').innerHTML = '<p style="color: #64748b; font-style: italic; font-size: 13px;">No architectural documentation found for this node.</p>';
     document.getElementById('raw-details').innerHTML = '<p style="color: #64748b; font-style: italic; font-size: 13px;">Documentation stream unavailable.</p>';
+    updateInspectorHistoryUI();
     setInspectorCollapsed(true);
 }
 

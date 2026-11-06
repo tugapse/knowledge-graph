@@ -32,8 +32,23 @@ function resetCamera() {
 }
 
 function focusNodeById(id) {
-    const targetNode = graphDataGlobal.nodes.find(n => n.id === id);
-    if (targetNode && Graph) {
+    const targetNode = graphDataGlobal && graphDataGlobal.nodes.find(n => n.id === id);
+    if (!targetNode) return;
+
+    if (typeof window.handleNodeSelection === 'function') {
+        window.handleNodeSelection(targetNode);
+        return;
+    }
+
+    if (Graph && typeof Graph.onNodeClick === 'function') {
+        const onNodeClick = Graph.onNodeClick();
+        if (typeof onNodeClick === 'function') {
+            onNodeClick(targetNode);
+            return;
+        }
+    }
+
+    if (Graph && typeof Graph.onNodeClick === 'function') {
         Graph.onNodeClick()(targetNode);
     }
 }
