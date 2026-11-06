@@ -163,8 +163,10 @@ function syncFloatingLabels() {
         return;
     }
 
-    const showClusters = (window.selectionIntensity < 0.6 && window.searchMatchingNodes.size === 0);
-    const clusterOpacity = Math.max(0, 1 - window.selectionIntensity * 1.8);
+    const showClusters = true;
+    const clusterOpacity = window.searchMatchingNodes.size > 0
+        ? 0.7
+        : Math.max(0.55, 1 - window.selectionIntensity * 0.9);
 
     Object.entries(window.clusterGroups).forEach(([name, grp]) => {
         const nodes = Array.isArray(grp) ? grp : grp;
@@ -206,6 +208,7 @@ function syncFloatingLabels() {
     });
 
     const activeNodeSet = window.highlightNodes.size > 0 ? window.highlightNodes : (window.searchMatchingNodes.size > 0 ? window.searchMatchingNodes : null);
+    const focusedNodeId = window.focusedNode ? String(window.focusedNode.id) : null;
 
     const existingPills = container.querySelectorAll('.hud-floating-pill');
     existingPills.forEach(pill => {
@@ -223,22 +226,27 @@ function syncFloatingLabels() {
             const screenPos = window.Graph.graph2ScreenCoords(node.x, node.y, node.z);
             const pillId = 'pill-' + btoa(node.id).replace(/=/g, '');
             let pill = document.getElementById(pillId);
+            const isTarget = focusedNodeId && String(node.id) === focusedNodeId;
 
             if (!pill) {
                 pill = document.createElement('div');
                 pill.id = pillId;
                 pill.dataset.nodeId = node.id;
-                pill.className = 'hud-floating-pill' + (window.focusedNode && window.focusedNode.id === node.id ? ' is-target' : '');
+                pill.className = 'hud-floating-pill' + (isTarget ? ' is-target' : '');
                 pill.innerText = node.name || node.id.split('/').pop().split('#').pop();
+                pill.addEventListener('click', (event) => {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    focusNodeById(node.id);
+                });
                 container.appendChild(pill);
             } else {
-                const isTarget = (window.focusedNode && window.focusedNode.id === node.id);
                 pill.classList.toggle('is-target', isTarget);
             }
 
             pill.style.left = `${screenPos.x}px`;
             pill.style.top = `${screenPos.y - 14}px`;
-            pill.style.opacity = (0.2 + 0.8 * window.selectionIntensity).toFixed(2);
+            pill.style.opacity = isTarget ? '1' : (0.35 + 0.65 * Math.max(window.selectionIntensity, 0.35)).toFixed(2);
         });
     }
 
