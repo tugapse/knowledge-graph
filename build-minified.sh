@@ -23,39 +23,44 @@ usage() {
     echo "Examples:"
     echo "  ./build-minified.sh"
     echo "  ./build-minified.sh ./knowledge ./docs"
-    echo "  ./build-minified.sh ./my-knowledge ./my-docs ./dist"
+    echo "  ./build-minified.sh ./my-knowledge /absolute/path/to/docs ./dist"
     echo ""
     echo "Optional environment:"
     echo "  PYTHON_ENTRY=python3 ./build-minified.sh"
 }
-
-# Path configuration
-KNOWLEDGE_DIR=${1:-"./knowledge"}
-DOCUMENTATION_DIR=${2:-"./docs"}
-BUILD_DIR=${3:-"./dist"}
-
-# Keep the bundle generation aligned with the reorganized project layout.
-SCRIPT_ENTRY="${PYTHON_ENTRY:-python3}"
 
 if [[ "${1:-}" == "-h" || "${1:-}" == "--help" ]]; then
     usage
     exit 0
 fi
 
-# Re-parse arguments after help check so positional dirs still work normally.
-if [[ -n "${1:-}" && "${1:-}" != "-h" && "${1:-}" != "--help" ]]; then
-    KNOWLEDGE_DIR="$1"
-fi
-if [[ -n "${2:-}" ]]; then
-    DOCUMENTATION_DIR="$2"
-fi
-if [[ -n "${3:-}" ]]; then
-    BUILD_DIR="$3"
-fi
+# Helper to resolve paths relative to the terminal's current working directory ($PWD)
+# unless an absolute path (starting with /) is explicitly provided.
+resolve_path() {
+    local path="$1"
+    if [[ "$path" == /* ]]; then
+        echo "$path"
+    else
+        echo "$PWD/$path"
+    fi
+}
+
+# Path configuration (using defaults if arguments are missing)
+KNOWLEDGE_DIR=$(resolve_path "${1:-./knowledge}")
+DOCUMENTATION_DIR=$(resolve_path "${2:-./docs}")
+BUILD_DIR=$(resolve_path "${3:-./dist}")
+
+# Keep the bundle generation aligned with the reorganized project layout.
+SCRIPT_ENTRY="${PYTHON_ENTRY:-python3}"
 
 echo -e "${CYAN}==================================================${NC}"
 echo -e "${CYAN}=== 1. STARTING PYTHON BUILD ===${NC}"
 echo -e "${CYAN}==================================================${NC}"
+echo -e "Knowledge Dir : $KNOWLEDGE_DIR"
+echo -e "Docs Dir      : $DOCUMENTATION_DIR"
+echo -e "Build Dir     : $BUILD_DIR"
+echo -e ""
+
 "$SCRIPT_ENTRY" "$SCRIPT_DIR/src/main.py" -k "$KNOWLEDGE_DIR" -d "$DOCUMENTATION_DIR" -b "$BUILD_DIR"
 
 if [ $? -ne 0 ]; then
