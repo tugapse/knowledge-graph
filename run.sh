@@ -19,19 +19,9 @@ if [[ "${1:-}" == "-h" || "${1:-}" == "--help" ]]; then
     exit 0
 fi
 
-RUN_BUILD=false
-FILTERED_ARGS=()
-
-for arg in "$@"; do
-    if [[ "$arg" == "--build-minified" ]]; then
-        RUN_BUILD=true
-    else
-        FILTERED_ARGS+=("$arg")
-    fi
-done
-
-if [ "$RUN_BUILD" = true ]; then
-    "$SCRIPT_DIR/build-minified.sh" "${FILTERED_ARGS[@]}"
+if[[ "${1:-}" == "--build-minified" ]]; then
+    shift # Remove the --build-minified flag from the arguments
+    "$SCRIPT_DIR/build-minified.sh" "$@"
     exit $?
 fi
 
