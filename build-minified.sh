@@ -29,9 +29,9 @@ resolve_path() {
 }
 
 # Valores por defeito
-K_DIR="./knowledge"
-D_DIR="./docs"
-B_DIR="./dist"
+K_DIR="knowledge"
+D_DIR="docs"
+B_DIR="dist"
 EXTRA_ARGS=()
 
 # Fazer parse das flags tal como o script Python faz
