@@ -1,0 +1,95 @@
+#!/usr/bin/env python3
+import argparse
+import os
+import sys
+from pathlib import Path
+
+SRC_DIR = Path(__file__).resolve().parent
+if str(SRC_DIR) not in sys.path:
+    sys.path.insert(0, str(SRC_DIR))
+
+from graph_loader import build_production_bundle
+from server import run_server
+
+
+def parse_arguments():
+    parser = argparse.ArgumentParser(
+        prog="python main.py",
+        description="KNOWLEDGE GRAPH VISUALIZER HELP",
+        epilog=(
+            "How to use it:\n"
+            "  1) Point -k to your knowledge directory (required).\n"
+            "  2) Optionally point -d to your docs directory.\n"
+            "  3) Start the local viewer with -p or just use the default port 8080.\n"
+            "  4) Use -b to generate a static bundle instead of starting the server.\n"
+            "  5) Use -r to specify root paths to strip for cleaner hierarchies (e.g. src/ai).\n\n"
+            "Examples:\n"
+            "  python main.py -k ./knowledge -d ./docs\n"
+            "  python main.py -k ./knowledge -d ./docs -p 8080\n"
+            "  python main.py -k ./knowledge -d ./docs -b ./dist -r src/ai\n"
+            "  python main.py -k ./knowledge -r src/ai lib/core"
+        ),
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        add_help=True,
+    )
+    parser.add_argument(
+        "-k",
+        "--knowledge",
+        dest="knowledge_dir",
+        required=True,
+        help="Path to the knowledge directory to load. This is required.",
+    )
+    parser.add_argument(
+        "-d",
+        "--docs",
+        dest="docs_dir",
+        default=None,
+        help="Optional path to the docs directory used for additional context.",
+    )
+    parser.add_argument(
+        "-p",
+        "--port",
+        dest="port",
+        type=int,
+        default=8080,
+        help="Port for the local web viewer. Default: 8080.",
+    )
+    parser.add_argument(
+        "-b",
+        "--build",
+        dest="build_dir",
+        nargs="?",
+        const="./dist",
+        default=None,
+        help="Build a static bundle into this directory instead of starting the server.",
+    )
+    parser.add_argument(
+        "-r",
+        "--root",
+        dest="root_paths",
+        nargs="*",
+        default=[],
+        help="Optional root paths to strip for canonical grouping (e.g. src/ai app).",
+    )
+    return parser.parse_args()
+
+
+def main():
+    args = parse_arguments()
+
+    if not os.path.exists(args.knowledge_dir):
+        print(f"[Erro] Diretoria não existe: {args.knowledge_dir}")
+        sys.exit(1)
+
+    if args.build_dir:
+        # Passa a lista de root_paths para o bundle
+        build_production_bundle(args.knowledge_dir, args.docs_dir, args.build_dir, args.root_paths)
+        return 0
+
+    # Passa a lista de root_paths para o servidor
+    run_server(args.knowledge_dir, args.docs_dir, args.port, args.root_paths)
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
