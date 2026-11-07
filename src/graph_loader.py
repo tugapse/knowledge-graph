@@ -194,8 +194,10 @@ def resolve_md_file(base_d_path: Path, doc_rel_path: str, comp_name: str) -> Opt
     clean_path = _normalize_doc_rel_path(doc_rel_path)
     candidates = [base_d_path / clean_path]
     parts = Path(clean_path).parts
+    
     if len(parts) > 1:
         candidates.append(base_d_path.joinpath(*parts[1:]))
+        
     filename = Path(clean_path).name
     candidates.append(base_d_path / filename)
 
@@ -204,11 +206,14 @@ def resolve_md_file(base_d_path: Path, doc_rel_path: str, comp_name: str) -> Opt
             return candidate
 
     comp_slug = re.sub(r"(?<!^)(?=[A-Z])", "_", comp_name).lower()
-    for search_name in (filename, f"{comp_name}.md", f"{comp_slug}.md"):
+    search_names = (filename, f"{comp_name}.md", f"{comp_slug}.md")
+    
+    for search_name in search_names:
         matches = list(base_d_path.glob(f"**/{search_name}"))
         if matches:
             return matches[0]
 
+    print(f"{YELLOW}[Aviso] Ficheiro markdown não encontrado para componente: {comp_name}{NC}")
     return None
 
 
@@ -238,6 +243,7 @@ def load_graph_data(knowledge_dir: str, docs_dir: str = None, root_paths: list[s
 
             comp = data.get("component", {})
             vec = data.get("vector_memory", {})
+            metadata = data.get("metadata", {})
             raw_path = comp.get("source_path", str(file_path))
             c_id = canonical_key(raw_path) or canonical_key(file_path.stem)
             comp_name = comp.get("name", Path(c_id).name)
@@ -272,7 +278,32 @@ def load_graph_data(knowledge_dir: str, docs_dir: str = None, root_paths: list[s
                     "human_overview": md_info.get("human_overview", ""),
                     "side_effects": md_info.get("side_effects", ""),
                     "raw_markdown": md_info.get("raw_markdown", ""),
+                    "environment_variables": metadata.get("environment_variables", []),
+                    "external_dependencies": metadata.get("external_dependencies", [])
                 }
+
+            # --- PROCESSA E CRIA NÓS/ARESTAS PARA AS EXTERNAL DEPENDENCIES ---
+            for ext_dep in metadata.get("external_dependencies", []):
+                if not ext_dep:
+                    continue
+                # Prefixo para garantir que não colide com ficheiros do projeto
+                ext_id = f"@external/{ext_dep}"
+                
+                if ext_id not in nodes_map:
+                    nodes_map[ext_id] = {
+                        "id": ext_id,
+                        "name": ext_dep,
+                        "group": "External/Dependency",
+                        "subsystem": "EXTERNAL",
+                        "subsystem_path": "EXTERNAL",
+                        "level_1": "EXTERNAL",
+                        "level_2": None,
+                        "level_3": None,
+                    }
+                
+                alias_lookup[ext_id] = ext_id
+                edges_list.append({"src": raw_path, "tgt": ext_id, "rel": "depends_on"})
+            # ------------------------------------------------------------------
 
             for sub_node in data.get("graph_nodes", []):
                 raw_sub_id = sub_node.get("id")
@@ -392,4 +423,3 @@ def build_production_bundle(knowledge_dir: str, docs_dir: str, output_dir: str, 
             print(f"{GREEN}[OK]{NC} Gravado {out_path / asset.name}")
 
     print(f"\n{GREEN}✔ Build concluído com sucesso em: {out_path.resolve()}{NC}")
-
