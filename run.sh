@@ -19,7 +19,7 @@ if [[ "${1:-}" == "-h" || "${1:-}" == "--help" ]]; then
     exit 0
 fi
 
-if[[ "${1:-}" == "--build-minified" ]]; then
+if [[ "${1:-}" == "--build-minified" ]]; then
     shift # Remove the --build-minified flag from the arguments
     "$SCRIPT_DIR/build-minified.sh" "$@"
     exit $?
