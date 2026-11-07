@@ -7,6 +7,7 @@ if str(SRC_DIR) not in sys.path:
     sys.path.insert(0, str(SRC_DIR))
 
 from graph_loader import canonical_key, extract_fs_hierarchy, load_graph_data
+from main import resolve_cli_path
 
 
 class GraphLoaderTests(unittest.TestCase):
@@ -25,6 +26,11 @@ class GraphLoaderTests(unittest.TestCase):
         self.assertIsInstance(result, dict)
         self.assertIn("nodes", result)
         self.assertIn("links", result)
+
+    def test_resolve_cli_path_uses_current_directory_for_empty_value(self):
+        self.assertEqual(resolve_cli_path(""), str(Path.cwd()))
+        self.assertEqual(resolve_cli_path("docs"), "docs")
+        self.assertIsNone(resolve_cli_path(None))
 
 
 if __name__ == "__main__":

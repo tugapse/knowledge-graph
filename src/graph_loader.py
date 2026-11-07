@@ -14,7 +14,7 @@ NC = "\033[0m"
 
 KNOWN_EXTENSIONS = (".py", ".json", ".md")
 GENERIC_NAMES = {"__init__", "index", "document", "uuid", "vec3", "this", "navigator", "engine"}
-ROOT_PREFIXES: tuple[str, ...] = ()
+ROOT_PREFIXES: tuple[str, ...] = ("src", "app", "lib")
 
 
 def configure_root_prefixes(root_folders: Optional[list[str]] = None) -> tuple[str, ...]:

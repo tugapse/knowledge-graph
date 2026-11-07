@@ -3,6 +3,7 @@ import argparse
 import os
 import sys
 from pathlib import Path
+from typing import Optional
 
 SRC_DIR = Path(__file__).resolve().parent
 if str(SRC_DIR) not in sys.path:
@@ -10,6 +11,14 @@ if str(SRC_DIR) not in sys.path:
 
 from graph_loader import build_production_bundle
 from server import run_server
+
+
+def resolve_cli_path(path_val: Optional[str]) -> Optional[str]:
+    if path_val is None:
+        return None
+    if path_val == "":
+        return str(Path.cwd())
+    return path_val
 
 
 def parse_arguments():

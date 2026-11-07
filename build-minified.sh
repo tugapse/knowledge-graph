@@ -2,7 +2,6 @@
 
 SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 export PYTHONPATH="${SCRIPT_DIR}${PYTHONPATH:+:${PYTHONPATH}}"
-cd "$SCRIPT_DIR"
 
 # Define colors for terminal output
 GREEN='\033[0;32m'
@@ -14,16 +13,17 @@ usage() {
     echo -e "${CYAN}Knowledge Graph Build Script${NC}"
     echo ""
     echo "Usage:"
-    echo "  ./build-minified.sh [knowledge_dir] [docs_dir]"
+    echo "  ./build-minified.sh [knowledge_dir] [docs_dir] [build_dir]"
     echo ""
     echo "Arguments:"
     echo "  knowledge_dir   Directory containing the knowledge graph input. Default: ./knowledge"
     echo "  docs_dir        Optional docs directory for extra context. Default: ./docs"
+    echo "  build_dir       Optional destination directory for static bundle. Default: ./dist"
     echo ""
     echo "Examples:"
     echo "  ./build-minified.sh"
     echo "  ./build-minified.sh ./knowledge ./docs"
-    echo "  ./build-minified.sh ./my-knowledge ./my-docs"
+    echo "  ./build-minified.sh ./my-knowledge ./my-docs ./dist"
     echo ""
     echo "Optional environment:"
     echo "  PYTHON_ENTRY=python3 ./build-minified.sh"
@@ -32,7 +32,7 @@ usage() {
 # Path configuration
 KNOWLEDGE_DIR=${1:-"./knowledge"}
 DOCUMENTATION_DIR=${2:-"./docs"}
-BUILD_DIR="./dist"
+BUILD_DIR=${3:-"./dist"}
 
 # Keep the bundle generation aligned with the reorganized project layout.
 SCRIPT_ENTRY="${PYTHON_ENTRY:-python3}"
@@ -48,6 +48,9 @@ if [[ -n "${1:-}" && "${1:-}" != "-h" && "${1:-}" != "--help" ]]; then
 fi
 if [[ -n "${2:-}" ]]; then
     DOCUMENTATION_DIR="$2"
+fi
+if [[ -n "${3:-}" ]]; then
+    BUILD_DIR="$3"
 fi
 
 echo -e "${CYAN}==================================================${NC}"
