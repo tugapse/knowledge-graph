@@ -75,6 +75,9 @@ fi
 echo -e ""
 
 # Chamar o Python com os paths absolutos + qualquer flag adicional (ex: -r ai)
+echo -e "${CYAN}[*]${NC} Running Python build..."
+echo -e "${CYAN}[*]${NC} Command: $SCRIPT_ENTRY $SCRIPT_DIR/src/main.py -k $KNOWLEDGE_DIR -d $DOCUMENTATION_DIR -b $BUILD_DIR ${EXTRA_ARGS[*]}"
+
 "$SCRIPT_ENTRY" "$SCRIPT_DIR/src/main.py" -k "$KNOWLEDGE_DIR" -d "$DOCUMENTATION_DIR" -b "$BUILD_DIR" "${EXTRA_ARGS[@]}"
 
 if [ $? -ne 0 ]; then
