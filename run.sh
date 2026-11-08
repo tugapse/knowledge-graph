@@ -26,4 +26,4 @@ if [[ "${1:-}" == "--build-minified" ]]; then
 fi
 
 PYTHON_ENTRY="${PYTHON_ENTRY:-python3}"
-"$PYTHON_ENTRY" "$SCRIPT_DIR/src/main.py" "${FILTERED_ARGS[@]}"
+"$PYTHON_ENTRY" "$SCRIPT_DIR/src/main.py" "$@"
