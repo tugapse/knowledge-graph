@@ -66,10 +66,10 @@ def parse_arguments():
     parser.add_argument(
         "-b",
         "--build",
-        default="_build",
         dest="build_dir",
         nargs="?",
         const="./dist",
+        default=None,
         help="Build a static bundle into this directory instead of starting the server.",
     )
     parser.add_argument(
