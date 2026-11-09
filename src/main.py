@@ -44,13 +44,14 @@ def parse_arguments():
     parser.add_argument(
         "-k",
         "--knowledge",
+        default="_knowledge",
         dest="knowledge_dir",
-        required=True,
         help="Path to the knowledge directory to load. This is required.",
     )
     parser.add_argument(
         "-d",
         "--docs",
+        default="_docs",
         dest="docs_dir",
         default=None,
         help="Optional path to the docs directory used for additional context.",
@@ -66,6 +67,7 @@ def parse_arguments():
     parser.add_argument(
         "-b",
         "--build",
+        default="_build",
         dest="build_dir",
         nargs="?",
         const="./dist",
