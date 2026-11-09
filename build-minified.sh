@@ -11,7 +11,7 @@ NC='\033[0m' # No Color
 
 usage() {
     echo -e "${CYAN}Knowledge Graph Build Script${NC}"
-    echo "Usage: ./build-minified.sh [-k knowledge_dir] [-d docs_dir] [-b build_dir] [extra flags...]"
+    echo "Usage: ./build-minified.sh [python args...]"
 }
 
 if [[ "${1:-}" == "-h" || "${1:-}" == "--help" ]]; then
@@ -28,57 +28,31 @@ resolve_path() {
     fi
 }
 
-# Valores por defeito
-K_DIR="knowledge"
-D_DIR="docs"
+# Peek at the arguments to find the build directory (-b) for minification.
+# Defaults to "dist" if not provided.
 B_DIR="dist"
-EXTRA_ARGS=()
-
-# Fazer parse das flags tal como o script Python faz
-while [[ $# -gt 0 ]]; do
-    case $1 in
-        -k)
-            K_DIR="$2"
-            shift 2
-            ;;
-        -d)
-            D_DIR="$2"
-            shift 2
-            ;;
-        -b)
-            B_DIR="$2"
-            shift 2
-            ;;
-        *)
-            EXTRA_ARGS+=("$1")
-            shift
-            ;;
-    esac
+args=("$@")
+for ((i=0; i<${#args[@]}; i++)); do
+    if [[ "${args[$i]}" == "-b" ]] && [[ $((i+1)) -lt ${#args[@]} ]]; then
+        B_DIR="${args[$((i+1))]}"
+        break
+    fi
 done
 
-# Resolver os caminhos relativos ao terminal atual ($PWD)
-KNOWLEDGE_DIR=$(resolve_path "$K_DIR")
-DOCUMENTATION_DIR=$(resolve_path "$D_DIR")
 BUILD_DIR=$(resolve_path "$B_DIR")
-
 SCRIPT_ENTRY="${PYTHON_ENTRY:-python3}"
 
 echo -e "${CYAN}==================================================${NC}"
 echo -e "${CYAN}=== 1. STARTING PYTHON BUILD ===${NC}"
 echo -e "${CYAN}==================================================${NC}"
-echo -e "Knowledge Dir : $KNOWLEDGE_DIR"
-echo -e "Docs Dir      : $DOCUMENTATION_DIR"
-echo -e "Build Dir     : $BUILD_DIR"
-if [ ${#EXTRA_ARGS[@]} -gt 0 ]; then
-    echo -e "Extra Args    : ${EXTRA_ARGS[*]}"
-fi
-echo -e ""
+echo -e "Args passed to Python: $@"
+echo -e "Minification Target:   $BUILD_DIR\n"
 
-# Chamar o Python com os paths absolutos + qualquer flag adicional (ex: -r ai)
 echo -e "${CYAN}[*]${NC} Running Python build..."
-echo -e "${CYAN}[*]${NC} Command: $SCRIPT_ENTRY $SCRIPT_DIR/src/main.py -k $KNOWLEDGE_DIR -d $DOCUMENTATION_DIR -b $BUILD_DIR ${EXTRA_ARGS[*]}"
+echo -e "${CYAN}[*]${NC} Command: $SCRIPT_ENTRY $SCRIPT_DIR/src/main.py $@"
 
-"$SCRIPT_ENTRY" "$SCRIPT_DIR/src/main.py" -k "$KNOWLEDGE_DIR" -d "$DOCUMENTATION_DIR" -b "$BUILD_DIR" "${EXTRA_ARGS[@]}"
+# Pass ALL arguments directly to Python without modifying them
+"$SCRIPT_ENTRY" "$SCRIPT_DIR/src/main.py" "$@"
 
 if [ $? -ne 0 ]; then
     echo -e "${RED}[Error] Python build failed. Aborting.${NC}"

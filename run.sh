@@ -19,6 +19,15 @@ if [[ "${1:-}" == "-h" || "${1:-}" == "--help" ]]; then
     exit 0
 fi
 
+# Check if the first argument is --build-minified
+if [[ "${1:-}" == "--build-minified" ]]; then
+    shift # Remove the --build-minified flag from the arguments list
+    
+    # Call the build-minified.sh script with the remaining arguments
+    "$SCRIPT_DIR/build-minified.sh" "$@"
+    exit $?
+fi
 
+# Otherwise, run the standard Python entry
 PYTHON_ENTRY="${PYTHON_ENTRY:-python3}"
 "$PYTHON_ENTRY" "$SCRIPT_DIR/src/main.py" "$@"
