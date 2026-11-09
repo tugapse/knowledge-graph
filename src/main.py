@@ -88,6 +88,10 @@ def main():
     abs_knowledge_dir = os.path.abspath(args.knowledge_dir)
     abs_docs_dir = os.path.abspath(args.docs_dir) if args.docs_dir else None
     abs_build_dir = os.path.abspath(args.build_dir) if args.build_dir else None
+    print(f"[Info] Knowledge directory: {abs_knowledge_dir}")
+    print(f"[Info] Docs directory: {abs_docs_dir}")
+    print(f"[Info] Build directory: {abs_build_dir}")
+
     if not os.path.exists(abs_knowledge_dir):
         print(f"[Erro] Diretoria não existe: {abs_knowledge_dir}")
         sys.exit(1)
