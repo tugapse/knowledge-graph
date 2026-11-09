@@ -73,7 +73,8 @@ for js_file in "$BUILD_DIR"/*.js; do
     if [ -f "$js_file" ]; then
         filename=$(basename "$js_file")
         echo -e "  ${CYAN}->${NC} Minifying $filename..."
-        npx --yes terser "$js_file" -o "$js_file" -c -m
+        # Safely compress without mangling variables or losing function/class names
+        npx --yes terser "$js_file" -o "$js_file" -c keep_fnames=true,keep_classnames=true
     fi
 done
 
