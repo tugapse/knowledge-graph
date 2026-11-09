@@ -53,7 +53,6 @@ def parse_arguments():
         "--docs",
         default="_docs",
         dest="docs_dir",
-        default=None,
         help="Optional path to the docs directory used for additional context.",
     )
     parser.add_argument(
@@ -71,7 +70,6 @@ def parse_arguments():
         dest="build_dir",
         nargs="?",
         const="./dist",
-        default=None,
         help="Build a static bundle into this directory instead of starting the server.",
     )
     parser.add_argument(
