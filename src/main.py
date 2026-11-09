@@ -93,7 +93,7 @@ def main():
     print(f"[Info] Build directory: {abs_build_dir}")
 
     if not os.path.exists(abs_knowledge_dir):
-        print(f"[Erro] Diretoria não existe: {abs_knowledge_dir}")
+        print(f"[Error] Directory does not exist: {abs_knowledge_dir}")
         sys.exit(1)
     
     if args.build_dir:
