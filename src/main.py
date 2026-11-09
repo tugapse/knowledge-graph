@@ -85,18 +85,20 @@ def parse_arguments():
 
 def main():
     args = parse_arguments()
-
-    if not os.path.exists(args.knowledge_dir):
-        print(f"[Erro] Diretoria não existe: {args.knowledge_dir}")
+    abs_knowledge_dir = os.path.abspath(args.knowledge_dir)
+    abs_docs_dir = os.path.abspath(args.docs_dir) if args.docs_dir else None
+    abs_build_dir = os.path.abspath(args.build_dir) if args.build_dir else None
+    if not os.path.exists(abs_knowledge_dir):
+        print(f"[Erro] Diretoria não existe: {abs_knowledge_dir}")
         sys.exit(1)
-
+    
     if args.build_dir:
         # Passa a lista de root_paths para o bundle
-        build_production_bundle(args.knowledge_dir, args.docs_dir, args.build_dir, args.root_paths)
+        build_production_bundle(abs_knowledge_dir, abs_docs_dir, abs_build_dir, args.root_paths)
         return 0
 
     # Passa a lista de root_paths para o servidor
-    run_server(args.knowledge_dir, args.docs_dir, args.port, args.root_paths)
+    run_server(abs_knowledge_dir, abs_docs_dir, args.port, args.root_paths)
     return 0
 
 
