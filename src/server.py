@@ -21,6 +21,18 @@ class VisualizerHandler(SimpleHTTPRequestHandler):
     root_paths = None
     source_dir = PROJECT_ROOT / "client"
 
+    def end_headers(self):
+        # Explicit CORS headers for local inspection and cross-origin fetching
+        self.send_header("Access-Control-Allow-Origin", "*")
+        self.send_header("Access-Control-Allow-Methods", "GET, OPTIONS")
+        self.send_header("Access-Control-Allow-Headers", "X-Requested-With, Content-Type")
+        super().end_headers()
+
+    def do_OPTIONS(self):
+        # Handle preflight requests gracefully
+        self.send_response(200)
+        self.end_headers()
+
     def do_GET(self):
         if self.path in ("/", "/index.html"):
             self.send_response(200)
@@ -31,7 +43,8 @@ class VisualizerHandler(SimpleHTTPRequestHandler):
             if html_file.exists():
                 self.wfile.write(html_file.read_bytes())
             else:
-                self.wfile.write(b"<h1>index.html not found!</h1>")
+                # FIXED: Encode the string to bytes to prevent TypeError
+                self.wfile.write("<h1>index.html not found!</h1>".encode("utf-8"))
             return
 
         if self.path in ("/api/data", "/data.json"):
