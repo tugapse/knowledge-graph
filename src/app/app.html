@@ -1,0 +1,30 @@
+<main class="app-viewport-root">
+  <!-- Top Bar: Search & Stats -->
+  <header class="app-top-bar">
+    <app-graph-search></app-graph-search>
+
+    <div class="stats-badge" *ngIf="stats$ | async as stats">
+      <span
+        >NODES: <strong>{{ stats.nodes }}</strong></span
+      >
+      <span class="stat-divider">|</span>
+      <span
+        >LINKS: <strong>{{ stats.links }}</strong></span
+      >
+    </div>
+
+    <button type="button" class="btn-reset-cam" (click)="onResetCamera()">RESET CAMERA</button>
+  </header>
+
+  <!-- 3D WebGL Scene Host -->
+  <app-graph-viewport #viewport></app-graph-viewport>
+
+  <!-- Floating 2D Screen-Space Overlay -->
+  <app-graph-hud [viewport]="viewport"></app-graph-hud>
+
+  <!-- Right Drawer Inspector Panel -->
+  <app-graph-inspector></app-graph-inspector>
+
+  <!-- Physics & Layout Tuner -->
+  <app-graph-config (configChange)="onConfigChanged($event)"></app-graph-config>
+</main>
