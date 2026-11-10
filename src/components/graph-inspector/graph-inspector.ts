@@ -110,7 +110,7 @@ declare const marked: any;
           <!-- 2. Cluster Focused View or Default Legend -->
           <ng-template #clusterOrLegendView>
             <ng-container *ngIf="focusedCluster && activeClusterGroup; else defaultLegendView">
-              <div *ngIf="activeClusterGroup?.parentKey" class="mb-12">
+              <div *ngIf="activeClusterGroup.parentKey" class="mb-12">
                 <div class="pill-item action-pill" (click)="onFocusCluster(activeClusterGroup.parentKey!)">
                   <span class="text-cyan"> BACK TO {{ getShortKey(activeClusterGroup.parentKey!) }}</span>
                   <span class="pill-relation">LEVEL {{ (activeClusterGroup.level || 1) - 1 }}</span>
@@ -174,15 +174,15 @@ declare const marked: any;
         <!-- DOCS TAB -->
         <div *ngIf="activeTab === 'docs'" class="tab-content">
           <ng-container *ngIf="focusedNode; else noDocsView">
-            <div *ngIf="focusedNode?.human_overview" class="property">
+            <div *ngIf="focusedNode.human_overview" class="property">
               <span class="prop-title">OVERVIEW & PURPOSE</span>
               <div class="value-box border-cyan">{{ focusedNode.human_overview }}</div>
             </div>
-            <div *ngIf="focusedNode?.side_effects" class="property">
+            <div *ngIf="focusedNode.side_effects" class="property">
               <span class="prop-title">SIDE EFFECTS & BEHAVIOR</span>
               <div class="value-box border-red text-red">{{ focusedNode.side_effects }}</div>
             </div>
-            <p *ngIf="!focusedNode?.human_overview && !focusedNode?.side_effects" class="muted-note">
+            <p *ngIf="!focusedNode.human_overview && !focusedNode.side_effects" class="muted-note">
               No architectural documentation found for this component.
             </p>
           </ng-container>

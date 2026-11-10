@@ -1,17 +1,17 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { GraphConfig } from './graph-config';
+import { GraphConfigComponent } from './graph-config';
 
-describe('GraphConfig', () => {
-  let component: GraphConfig;
-  let fixture: ComponentFixture<GraphConfig>;
+describe('GraphConfigComponent', () => {
+  let component: GraphConfigComponent;
+  let fixture: ComponentFixture<GraphConfigComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [GraphConfig],
+      imports: [GraphConfigComponent],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(GraphConfig);
+    fixture = TestBed.createComponent(GraphConfigComponent);
     component = fixture.componentInstance;
     await fixture.whenStable();
   });

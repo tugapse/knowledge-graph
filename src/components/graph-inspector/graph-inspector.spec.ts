@@ -1,17 +1,17 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { GraphInspector } from './graph-inspector';
+import { GraphInspectorComponent } from './graph-inspector';
 
-describe('GraphInspector', () => {
-  let component: GraphInspector;
-  let fixture: ComponentFixture<GraphInspector>;
+describe('GraphInspectorComponent', () => {
+  let component: GraphInspectorComponent;
+  let fixture: ComponentFixture<GraphInspectorComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [GraphInspector],
+      imports: [GraphInspectorComponent],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(GraphInspector);
+    fixture = TestBed.createComponent(GraphInspectorComponent);
     component = fixture.componentInstance;
     await fixture.whenStable();
   });

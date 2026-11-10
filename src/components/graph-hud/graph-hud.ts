@@ -7,6 +7,7 @@ import {
   ChangeDetectorRef,
   NgZone
 } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { Subscription } from 'rxjs';
 import { GraphStateService } from '../../services/graph-state.service';
 import { DEFAULT_GRAPH_CONFIG } from '../../core/graph.config';
@@ -40,6 +41,8 @@ interface ProjectedPill {
 
 @Component({
   selector: 'app-graph-hud',
+  standalone: true,
+  imports: [CommonModule],
   template: `
     <div class="hud-labels-layer">
       <!-- Cluster Badges -->

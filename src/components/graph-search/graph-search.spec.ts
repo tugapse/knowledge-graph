@@ -1,17 +1,17 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { GraphSearch } from './graph-search';
+import { GraphSearchComponent } from './graph-search';
 
-describe('GraphSearch', () => {
-  let component: GraphSearch;
-  let fixture: ComponentFixture<GraphSearch>;
+describe('GraphSearchComponent', () => {
+  let component: GraphSearchComponent;
+  let fixture: ComponentFixture<GraphSearchComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [GraphSearch],
+      imports: [GraphSearchComponent],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(GraphSearch);
+    fixture = TestBed.createComponent(GraphSearchComponent);
     component = fixture.componentInstance;
     await fixture.whenStable();
   });

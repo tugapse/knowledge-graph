@@ -1,17 +1,17 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { GraphHud } from './graph-hud';
+import { GraphHudComponent } from './graph-hud';
 
-describe('GraphHud', () => {
-  let component: GraphHud;
-  let fixture: ComponentFixture<GraphHud>;
+describe('GraphHudComponent', () => {
+  let component: GraphHudComponent;
+  let fixture: ComponentFixture<GraphHudComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [GraphHud],
+      imports: [GraphHudComponent],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(GraphHud);
+    fixture = TestBed.createComponent(GraphHudComponent);
     component = fixture.componentInstance;
     await fixture.whenStable();
   });
