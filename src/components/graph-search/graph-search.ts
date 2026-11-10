@@ -8,16 +8,19 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef
 } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { Subscription } from 'rxjs';
 import { GraphStateService } from '../../services/graph-state.service';
 import { GraphNode } from '../../core/graph.model';
 
 @Component({
   selector: 'app-graph-search',
+  standalone: true,
+  imports: [CommonModule],
   template: `
     <div class="search-container" #containerRef>
       <div class="search-input-wrapper">
-        <span class="search-icon">🔍</span>
+        <span class="search-icon"></span>
         <input
           #searchInput
           type="text"

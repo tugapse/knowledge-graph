@@ -7,12 +7,13 @@ import {
   ChangeDetectionStrategy,
   NgZone
 } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import ForceGraph3D from '3d-force-graph';
 import { Subscription } from 'rxjs';
 import { GraphStateService } from '../../services/graph-state.service';
 import { GraphHierarchyService } from '../../services/graph-hierarchy.service';
 import { DEFAULT_GRAPH_CONFIG } from '../../core/graph.config';
 import { GraphNode, GraphConfig, GraphLink } from '../../core/graph.model';
-
 
 const getNodeId = (target: string | GraphNode): string => {
   return typeof target === 'object' ? target.id : target;
@@ -20,6 +21,8 @@ const getNodeId = (target: string | GraphNode): string => {
 
 @Component({
   selector: 'app-graph-viewport',
+  standalone: true,
+  imports: [CommonModule],
   template: `<div #graphCanvas class="graph-viewport-canvas"></div>`,
   styles: [`
     :host {

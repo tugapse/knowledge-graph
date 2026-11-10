@@ -1,13 +1,7 @@
 import { Injectable } from '@angular/core';
-import { 
-  GraphNode, 
-  GraphLink, 
-  GraphConfig, 
-  ClusterGroup, 
-  ColorRgb, 
-  ColorHexRgb 
-} from '../models/graph.model';
-import { DEFAULT_GRAPH_CONFIG } from '../config/graph.config';
+import { DEFAULT_GRAPH_CONFIG } from '../core/graph.config';
+import { GraphConfig, GraphNode, ClusterGroup, ColorRgb, GraphLink, ColorHexRgb } from '../core/graph.model';
+
 
 @Injectable({
   providedIn: 'root'

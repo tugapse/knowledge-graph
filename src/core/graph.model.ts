@@ -9,6 +9,25 @@ export interface ColorRgb {
   b: number;
 }
 
+export interface NodeColorMap {
+  module: ColorRgb;
+  class: ColorRgb;
+  function: ColorRgb;
+  service: ColorRgb;
+  interface: ColorRgb;
+  default: ColorRgb;
+  [key: string]: ColorRgb;
+}
+
+export interface LinkColorMap {
+  imports: ColorRgb;
+  calls: ColorRgb;
+  inherits: ColorRgb;
+  default: ColorRgb;
+  [key: string]: ColorRgb;
+}
+
+// Keep GraphNode compatible with whatever 3d-force-graph accepts
 export interface GraphNode {
   id: string;
   name?: string;
@@ -23,6 +42,10 @@ export interface GraphNode {
   vx?: number;
   vy?: number;
   vz?: number;
+  fx?: number;
+  fy?: number;
+  fz?: number;
+  index?: number;
   signature?: string;
   semantic_summary?: string;
   keywords?: string[];
@@ -33,8 +56,9 @@ export interface GraphNode {
 }
 
 export interface GraphLink {
-  source: string | GraphNode;
-  target: string | GraphNode;
+  source: string | GraphNode | any;
+  target: string | GraphNode | any;
+  index?: number;
   relation?: string;
   [key: string]: any;
 }
@@ -44,12 +68,13 @@ export interface GraphData {
   links: GraphLink[];
 }
 
-export interface ClusterGroup extends Array<GraphNode> {
+// Defined as type intersection so TypeScript permits array methods + custom properties
+export type ClusterGroup = GraphNode[] & {
   level?: number;
   shortName?: string;
   parentKey?: string | null;
   targetCenter?: { x: number; y: number; z: number };
-}
+};
 
 export interface GraphConfig {
   dag: {
@@ -58,7 +83,7 @@ export interface GraphConfig {
     distance: number;
   };
   colors: {
-levels: Record<number, ColorHexRgb>;
+    levels: Record<number, ColorHexRgb>;
     nodes: NodeColorMap;
     links: LinkColorMap;
     opacities: {
@@ -111,21 +136,4 @@ levels: Record<number, ColorHexRgb>;
     clusterMaxPills: number;
     globalMaxPills: number;
   };
-}
-export interface NodeColorMap {
-  module: ColorRgb;
-  class: ColorRgb;
-  function: ColorRgb;
-  service: ColorRgb;
-  interface: ColorRgb;
-  default: ColorRgb;
-  [key: string]: ColorRgb;
-}
-
-export interface LinkColorMap {
-  imports: ColorRgb;
-  calls: ColorRgb;
-  inherits: ColorRgb;
-  default: ColorRgb;
-  [key: string]: ColorRgb;
 }

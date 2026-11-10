@@ -1,4 +1,5 @@
 import { Component, OnInit, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { Subscription } from 'rxjs';
 import { GraphStateService, NeighborRelation } from '../../services/graph-state.service';
 import { GraphHierarchyService } from '../../services/graph-hierarchy.service';
@@ -9,6 +10,8 @@ declare const marked: any;
 
 @Component({
   selector: 'app-graph-inspector',
+  standalone: true,
+  imports: [CommonModule],
   template: `
     <aside class="inspector-panel">
       <!-- Header Tabs -->
@@ -107,9 +110,9 @@ declare const marked: any;
           <!-- 2. Cluster Focused View or Default Legend -->
           <ng-template #clusterOrLegendView>
             <ng-container *ngIf="focusedCluster && activeClusterGroup; else defaultLegendView">
-              <div *ngIf="activeClusterGroup.parentKey" class="mb-12">
+              <div *ngIf="activeClusterGroup?.parentKey" class="mb-12">
                 <div class="pill-item action-pill" (click)="onFocusCluster(activeClusterGroup.parentKey!)">
-                  <span class="text-cyan">↑ BACK TO {{ getShortKey(activeClusterGroup.parentKey!) }}</span>
+                  <span class="text-cyan"> BACK TO {{ getShortKey(activeClusterGroup.parentKey!) }}</span>
                   <span class="pill-relation">LEVEL {{ (activeClusterGroup.level || 1) - 1 }}</span>
                 </div>
               </div>
@@ -128,7 +131,7 @@ declare const marked: any;
                 <span class="prop-title">CHILD SUB-CLUSTERS ({{ childClusters.length }})</span>
                 <div class="pill-list">
                   <div *ngFor="let cKey of childClusters" class="pill-item" (click)="onFocusCluster(cKey)">
-                    <span class="text-cyan">↳ {{ clusterGroups[cKey].shortName || cKey }}</span>
+                    <span class="text-cyan"> {{ clusterGroups[cKey].shortName || cKey }}</span>
                     <span class="pill-relation">{{ clusterGroups[cKey].length }} nodes</span>
                   </div>
                 </div>
@@ -139,7 +142,7 @@ declare const marked: any;
                   <span class="prop-title">NODES IN CLUSTER ({{ activeClusterGroup.length }})</span>
                   <div class="pill-list">
                     <div *ngFor="let n of activeClusterGroup" class="pill-item" (click)="onFocusNode(n.id)">
-                      <span class="pill-name">• {{ n.name || n.id }}</span>
+                      <span class="pill-name"> {{ n.name || n.id }}</span>
                       <span class="pill-relation">{{ n.group || 'node' }}</span>
                     </div>
                   </div>
@@ -171,15 +174,15 @@ declare const marked: any;
         <!-- DOCS TAB -->
         <div *ngIf="activeTab === 'docs'" class="tab-content">
           <ng-container *ngIf="focusedNode; else noDocsView">
-            <div *ngIf="focusedNode.human_overview" class="property">
+            <div *ngIf="focusedNode?.human_overview" class="property">
               <span class="prop-title">OVERVIEW & PURPOSE</span>
               <div class="value-box border-cyan">{{ focusedNode.human_overview }}</div>
             </div>
-            <div *ngIf="focusedNode.side_effects" class="property">
+            <div *ngIf="focusedNode?.side_effects" class="property">
               <span class="prop-title">SIDE EFFECTS & BEHAVIOR</span>
               <div class="value-box border-red text-red">{{ focusedNode.side_effects }}</div>
             </div>
-            <p *ngIf="!focusedNode.human_overview && !focusedNode.side_effects" class="muted-note">
+            <p *ngIf="!focusedNode?.human_overview && !focusedNode?.side_effects" class="muted-note">
               No architectural documentation found for this component.
             </p>
           </ng-container>

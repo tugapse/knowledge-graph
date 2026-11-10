@@ -1,10 +1,15 @@
 import { Component, OnInit, ViewChild, ChangeDetectionStrategy } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Observable, map } from 'rxjs';
-import { GraphStateService } from './core/services/graph-state.service';
-import { GraphHierarchyService } from './core/services/graph-hierarchy.service';
-import { GraphViewportComponent } from './core/components/graph-viewport/graph-viewport.component';
-import { GraphData, GraphConfig, GraphNode } from './core/models/graph.model';
+import { GraphData, GraphNode, GraphConfig } from '../core/graph.model';
+import { GraphViewportComponent } from '../components/graph-viewport/graph-viewport';
+import { GraphHudComponent } from '../components/graph-hud/graph-hud';
+import { GraphInspectorComponent } from '../components/graph-inspector/graph-inspector';
+import { GraphSearchComponent } from '../components/graph-search/graph-search';
+import { GraphConfigComponent } from '../components/graph-config/graph-config';
+import { GraphHierarchyService } from '../services/graph-hierarchy.service';
+import { GraphStateService } from '../services/graph-state.service';
 
 const getNodeId = (target: string | GraphNode): string => {
   return typeof target === 'object' ? target.id : target;
@@ -12,25 +17,36 @@ const getNodeId = (target: string | GraphNode): string => {
 
 @Component({
   selector: 'app-root',
-  templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss'],
+  standalone: true,
+  imports: [
+    CommonModule,
+    GraphSearchComponent,
+    GraphViewportComponent,
+    GraphHudComponent,
+    GraphInspectorComponent,
+    GraphConfigComponent
+  ],
+  templateUrl: './app.html',
+  styleUrls: ['./app.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AppComponent implements OnInit {
   @ViewChild('viewport', { static: true }) viewport!: GraphViewportComponent;
 
-  readonly stats$: Observable<{ nodes: number; links: number }> = this.state.graphData$.pipe(
-    map(data => ({
-      nodes: data?.nodes.length || 0,
-      links: data?.links.length || 0
-    }))
-  );
+  stats$: Observable<{ nodes: number; links: number }>;
 
   constructor(
     private http: HttpClient,
     private state: GraphStateService,
     private hierarchy: GraphHierarchyService
-  ) {}
+  ) {
+    this.stats$ = this.state.graphData$.pipe(
+      map(data => ({
+        nodes: data?.nodes.length || 0,
+        links: data?.links.length || 0
+      }))
+    );
+  }
 
   ngOnInit(): void {
     this.loadGraphData();

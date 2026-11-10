@@ -1,9 +1,13 @@
 import { Component, ChangeDetectionStrategy, Output, EventEmitter } from '@angular/core';
-import { DEFAULT_GRAPH_CONFIG } from '../../config/graph.config';
-import { GraphConfig } from '../../models/graph.model';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { GraphConfig } from '../../core/graph.model';
+import { DEFAULT_GRAPH_CONFIG } from '../../core/graph.config';
 
 @Component({
   selector: 'app-graph-config',
+  standalone: true,
+  imports: [CommonModule, FormsModule],
   template: `
     <!-- Toggle Floating Button -->
     <button
@@ -12,7 +16,7 @@ import { GraphConfig } from '../../models/graph.model';
       class="cfg-toggle-btn"
       (click)="isOpen = true"
     >
-      ⚙️ CONFIG
+       CONFIG
     </button>
 
     <!-- Tuner Drawer / Modal -->
