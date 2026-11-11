@@ -14,6 +14,9 @@ import { DEFAULT_GRAPH_CONFIG } from '../../core/graph.config';
 import { ClusterGroup, GraphNode } from '../../core/graph.model';
 import { GraphViewportComponent } from '../graph-viewport/graph-viewport';
 import { GraphSearchComponent } from '../graph-search/graph-search';
+import { GraphStyleService } from '../../services/graph-style.service';
+
+export const DEFAULT_HUD_TITLE = 'KNOWLEDGE GRAPH // EXPLORER';
 
 interface ProjectedBadge {
   id: string;
@@ -24,6 +27,7 @@ interface ProjectedBadge {
   x: number;
   y: number;
   opacity: number;
+  scale: number;
   borderColor: string;
   color: string;
   textShadow: string;
@@ -37,7 +41,9 @@ interface ProjectedPill {
   y: number;
   isTarget: boolean;
   opacity: number;
+  scale: number;
 }
+
 
 @Component({
   selector: 'app-graph-hud',
@@ -49,6 +55,12 @@ interface ProjectedPill {
 })
 export class GraphHudComponent implements OnInit, OnDestroy {
   @Input() viewport!: GraphViewportComponent;
+  /** Header title; falls back to DEFAULT_HUD_TITLE when empty or not provided. */
+  @Input() title?: string | null;
+
+  get displayTitle(): string {
+    return this.title?.trim() || DEFAULT_HUD_TITLE;
+  }
 
   visibleBadges: ProjectedBadge[] = [];
   visiblePills: ProjectedPill[] = [];
@@ -70,8 +82,13 @@ export class GraphHudComponent implements OnInit, OnDestroy {
   constructor(
     private state: GraphStateService,
     private cdr: ChangeDetectorRef,
-    private ngZone: NgZone
+    private ngZone: NgZone,
+    private styleService: GraphStyleService
   ) {}
+
+  get pillFontSize(): number {
+    return this.styleService.style.labels.pillFontSize;
+  }
 
   switchTab(tabId: string): void {
     this.activeTab = tabId;
@@ -185,6 +202,19 @@ export class GraphHudComponent implements OnInit, OnDestroy {
       ? (this.clusterGroups[this.focusedClusterPrefix].level || 0)
       : 0;
 
+    // Label tiers (configurable in the style panel):
+    // active = the focused level, child = nested inside it, faded = ancestors / unrelated.
+    const {
+      activeOpacity: ACTIVE_OPACITY,
+      childOpacity: CHILD_OPACITY,
+      fadedOpacity: FADED_OPACITY,
+      activeScale: ACTIVE_SCALE,
+      badgeFontSize
+    } = this.styleService.style.labels;
+
+    // The "active level": the focused cluster, or the cluster the focused node lives in.
+    const activeClusterKey = this.focusedClusterPrefix ?? this.focusedNode?.subsystem ?? null;
+
     Object.entries(this.clusterGroups).forEach(([name, grp]) => {
       const lvl = grp.level || 1;
       const validCount = grp.length;
@@ -218,11 +248,11 @@ export class GraphHudComponent implements OnInit, OnDestroy {
         const rootKey = nLevels[0];
 
         if (name === this.focusedNode.subsystem) {
-          isVisible = true; opacity = 1.0;
+          isVisible = true; opacity = ACTIVE_OPACITY;
         } else if (name === parentKey && this.focusedNode.subsystem !== parentKey) {
-          isVisible = true; opacity = 0.8;
+          isVisible = true; opacity = FADED_OPACITY;
         } else if (name === rootKey && this.focusedNode.subsystem !== rootKey) {
-          isVisible = true; opacity = 0.5;
+          isVisible = true; opacity = FADED_OPACITY;
         }
       } else if (this.focusedClusterPrefix) {
         const focusedGrp = this.clusterGroups[this.focusedClusterPrefix];
@@ -230,23 +260,23 @@ export class GraphHudComponent implements OnInit, OnDestroy {
         const grandParentKey = focusedGrp && parentKey && this.clusterGroups[parentKey] ? this.clusterGroups[parentKey].parentKey : null;
 
         if (name === this.focusedClusterPrefix) {
-          isVisible = true; opacity = 1.0;
+          isVisible = true; opacity = ACTIVE_OPACITY;
         } else if (name.startsWith(this.focusedClusterPrefix + ' / ') && lvl === activeClusterLvl + 1) {
-          isVisible = true; opacity = 0.92;
+          isVisible = true; opacity = CHILD_OPACITY;
         } else if (name === parentKey) {
-          isVisible = true; opacity = 0.8;
+          isVisible = true; opacity = FADED_OPACITY;
         } else if (name === grandParentKey) {
-          isVisible = true; opacity = 0.5;
+          isVisible = true; opacity = FADED_OPACITY;
         }
       } else if (this.searchMatchingNodes.size === 0) {
         if (lvl === 1) {
           isVisible = true;
-          opacity = 1.0;
+          opacity = ACTIVE_OPACITY;
         }
       }
 
       if (isVisible) {
-        const colors = DEFAULT_GRAPH_CONFIG.colors.levels[lvl] || DEFAULT_GRAPH_CONFIG.colors.levels[10];
+        const colors = this.styleService.levelColor(lvl);
         badges.push({
           id: name,
           name,
@@ -256,10 +286,11 @@ export class GraphHudComponent implements OnInit, OnDestroy {
           x: screenPos.x,
           y: screenPos.y,
           opacity,
+          scale: name === activeClusterKey ? ACTIVE_SCALE : 1,
           borderColor: `rgba(${colors.rgb}, 0.75)`,
           color: colors.hex,
           textShadow: `0 0 8px rgba(${colors.rgb}, 0.4)`,
-          fontSize: lvl === 1 ? '12px' : lvl === 2 ? '10px' : `${Math.max(6, 11 - lvl)}px`
+          fontSize: `${lvl === 1 ? badgeFontSize : lvl === 2 ? badgeFontSize - 2 : Math.max(9, badgeFontSize - 1 - lvl)}px`
         });
       }
     });
@@ -274,7 +305,7 @@ export class GraphHudComponent implements OnInit, OnDestroy {
       : null;
 
     if (activeNodeSet) {
-      if (activeNodeSet.size <= DEFAULT_GRAPH_CONFIG.labels.clusterMaxPills) {
+      if (activeNodeSet.size <= this.styleService.style.labels.maxPills) {
         nodesToLabel = new Set(activeNodeSet);
       }
       if (this.focusedNode) {
@@ -289,13 +320,23 @@ export class GraphHudComponent implements OnInit, OnDestroy {
       const screenPos = this.viewport.getScreenCoords(node.x, node.y, node.z);
       if (!screenPos) return;
 
+      const isTarget = !!(this.focusedNode && this.focusedNode.id === node.id);
+      const isActive = isTarget || (activeClusterKey !== null && node.subsystem === activeClusterKey);
+      const isChild = activeClusterKey !== null && (node.subsystem || '').startsWith(activeClusterKey + ' / ');
+      // Direct connections of the selected node are always fully visible, wherever they live.
+      const isDirectNeighbor = !!this.focusedNode && this.highlightNodes.has(node.id);
+      const opacity = activeClusterKey === null
+        ? 0.2 + 0.8 * this.selectionIntensity
+        : isActive || isDirectNeighbor ? ACTIVE_OPACITY : isChild ? CHILD_OPACITY : FADED_OPACITY;
+
       pills.push({
         id: node.id,
         name: node.name || node.id.split('/').pop()?.split('#').pop() || '',
         x: screenPos.x,
         y: screenPos.y - 14,
-        isTarget: !!(this.focusedNode && this.focusedNode.id === node.id),
-        opacity: Number((0.2 + 0.8 * this.selectionIntensity).toFixed(2))
+        isTarget,
+        opacity: Number(opacity.toFixed(2)),
+        scale: isActive && activeClusterKey !== null ? ACTIVE_SCALE : 1
       });
     });
 

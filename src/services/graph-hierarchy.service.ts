@@ -1,17 +1,14 @@
 import { Injectable } from '@angular/core';
-import { DEFAULT_GRAPH_CONFIG } from '../core/graph.config';
-import { GraphConfig, GraphNode, ClusterGroup, ColorRgb, GraphLink, ColorHexRgb } from '../core/graph.model';
+import { GraphNode, ClusterGroup, ColorRgb, GraphLink, ColorHexRgb } from '../core/graph.model';
+import { GraphStyleService } from './graph-style.service';
 
 
 @Injectable({
   providedIn: 'root'
 })
 export class GraphHierarchyService {
-  private config: GraphConfig = DEFAULT_GRAPH_CONFIG;
+  constructor(private style: GraphStyleService) {}
 
-  setConfig(config: GraphConfig): void {
-    this.config = config;
-  }
 
   parseNodeLevels(node: GraphNode | null): string[] {
     if (!node) return ['CORE'];
@@ -77,7 +74,6 @@ export class GraphHierarchyService {
 
       const leafKey = levels.join(' / ');
       node.subsystem = leafKey;
-      node.connectionCount = 0;
 
       for (let i = 1; i <= levels.length; i++) {
         const key = levels.slice(0, i).join(' / ');
@@ -112,15 +108,16 @@ export class GraphHierarchyService {
     currentPath = '',
     parentAngle = 0
   ): void {
-    if (this.config.dag.enabled) return;
+    if (this.style.style.dag.enabled) return;
 
     const keys = Object.keys(hierarchyObj).filter(Boolean);
     keys.forEach((key, i) => {
       const fullPath = currentPath ? `${currentPath} / ${key}` : key;
       const nodeCount = clusterGroups[fullPath] ? clusterGroups[fullPath].length : 1;
 
-      const baseR = this.config.physics.orbits.base[currentLevel] || 10;
-      const scaleR = this.config.physics.orbits.scale[currentLevel] || 2;
+      const orbits = this.style.style.physics.orbits;
+      const baseR = orbits.base[currentLevel] || 10;
+      const scaleR = orbits.scale[currentLevel] || 2;
       const r = baseR + Math.sqrt(nodeCount) * scaleR;
 
       const a = parentAngle + (2 * Math.PI * i) / keys.length;
@@ -144,24 +141,25 @@ export class GraphHierarchyService {
 
   getNodeBaseColor(node: GraphNode): ColorRgb {
     const grp = (node.group || '').toLowerCase();
-    if (grp === 'module' || grp === 'script') return this.config.colors.nodes.module;
-    if (grp === 'class' || grp === 'controller') return this.config.colors.nodes.class;
-    if (grp === 'function' || grp === 'utility' || grp === 'directive') return this.config.colors.nodes.function;
-    if (grp === 'service') return this.config.colors.nodes.service;
-    if (grp === 'interface' || grp === 'model') return this.config.colors.nodes.interface;
-    return this.config.colors.nodes.default;
+    if (grp === 'module' || grp === 'script') return this.style.nodeColor('module');
+    if (grp === 'class' || grp === 'controller') return this.style.nodeColor('class');
+    if (grp === 'function' || grp === 'utility' || grp === 'directive') return this.style.nodeColor('function');
+    if (grp === 'service') return this.style.nodeColor('service');
+    if (grp === 'interface' || grp === 'model') return this.style.nodeColor('interface');
+    return this.style.nodeColor('default');
   }
 
   getLinkBaseColor(link: GraphLink): ColorRgb {
     const rel = (link.relation || '').toLowerCase();
-    if (rel === 'imports') return this.config.colors.links.imports;
-    if (rel === 'calls' || rel === 'extends') return this.config.colors.links.calls;
-    if (rel === 'inherits' || rel === 'depends_on') return this.config.colors.links.inherits;
-    return this.config.colors.links.default;
+    if (rel === 'imports') return this.style.linkColor('imports');
+    if (rel === 'calls' || rel === 'extends') return this.style.linkColor('calls');
+    if (rel === 'inherits' || rel === 'depends_on') return this.style.linkColor('inherits');
+    if (rel === 'uses') return this.style.linkColor('uses');
+    return this.style.linkColor('default');
   }
 
   getLevelColor(node: GraphNode): ColorHexRgb {
     const lvl = (node._levels || []).length;
-    return this.config.colors.levels[lvl] || this.config.colors.levels[10];
+    return this.style.levelColor(lvl);
   }
 }

@@ -6,6 +6,7 @@
   height: 100%;
   pointer-events: none;
   z-index: 10;
+  overflow: clip; // labels projected near the edges must not widen the page
 }
 
 .hud-floating-pill {
@@ -15,48 +16,50 @@
   border: 1px solid var(--hud-cyan);
   color: var(--hud-cyan);
   font-family: 'JetBrains Mono', monospace;
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 600;
-  padding: 3px 8px;
+  padding: 4px 10px;
   border-radius: 4px;
   pointer-events: auto;
   cursor: pointer;
   white-space: nowrap;
   box-shadow: 0 0 10px rgba(0, 240, 255, 0.4);
-  transition: opacity 0.2s ease, z-index 0.2s ease;
+  transition: opacity 0.2s ease, transform 0.2s ease;
   z-index: 1;
+
+  &.is-active { z-index: 5; }
 
   &.is-target {
     background: var(--hud-cyan);
     color: var(--hud-dark-solid);
     font-weight: 700;
     box-shadow: 0 0 15px rgba(0, 240, 255, 0.8);
-    z-index: 20;
+    z-index: 50;
   }
 }
 
 .hud-cluster-badge {
   position: absolute;
   transform: translate(-50%, -50%);
-  background: rgba(2, 16, 32, 0.8);
+  background: rgba(2, 12, 24, 0.97);
   border: 1px dashed rgba(0, 240, 255, 0.6);
   color: var(--hud-cyan);
   font-family: 'Orbitron', sans-serif;
-  font-size: 10.5px;
+  font-size: 12px;
   font-weight: 700;
   letter-spacing: 1.5px;
-  padding: 4px 10px;
+  padding: 5px 12px;
   border-radius: 4px;
   pointer-events: auto;
   cursor: pointer;
   white-space: nowrap;
   box-shadow: 0 0 15px rgba(0, 240, 255, 0.25);
-  transition: all 0.2s ease;
+  transition: opacity 0.2s ease, transform 0.2s ease;
 
   span {
     color: var(--text-muted);
     font-family: 'JetBrains Mono', monospace;
-    font-size: 9px;
+    font-size: 11px;
     margin-left: 4px;
   }
 }

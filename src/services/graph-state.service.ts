@@ -7,6 +7,9 @@ export interface NeighborRelation {
   name: string;
   relation: string;
   dir: 'OUT' | 'IN' | 'SELF';
+  group?: string;
+  /** True when the link was inferred from the node's markdown docs. */
+  inferred?: boolean;
 }
 
 @Injectable({
@@ -112,9 +115,18 @@ export class GraphStateService {
 
           const isOut = sId === node.id;
           const otherId = isOut ? tId : sId;
-          const otherName = otherId.split('#').pop()?.split('/').pop() || otherId;
+          const other = isOut ? link.target : link.source;
+          const otherNode = typeof other === 'object' ? other : data.nodes.find(n => n.id === otherId);
+          const otherName = otherNode?.name || otherId.split('#').pop()?.split('/').pop() || otherId;
           const rel = link.relation || (isOut ? 'targets' : 'source');
-          neighbors.push({ id: otherId, name: otherName, relation: rel, dir: isOut ? 'OUT' : 'IN' });
+          neighbors.push({
+            id: otherId,
+            name: otherName,
+            relation: rel,
+            dir: isOut ? 'OUT' : 'IN',
+            group: otherNode?.group,
+            inferred: !!link.inferred
+          });
         }
       });
     }

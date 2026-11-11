@@ -52,6 +52,8 @@ export interface GraphNode {
   human_overview?: string;
   side_effects?: string;
   raw_markdown?: string;
+  environment_variables?: string[];
+  external_dependencies?: string[];
   [key: string]: any;
 }
 
@@ -60,6 +62,8 @@ export interface GraphLink {
   target: string | GraphNode | any;
   index?: number;
   relation?: string;
+  /** Set by normalizeGraphData for dependencies found only in markdown docs. */
+  inferred?: boolean;
   [key: string]: any;
 }
 

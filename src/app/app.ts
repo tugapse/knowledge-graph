@@ -2,15 +2,12 @@ import { Component, OnInit, ViewChild, ChangeDetectionStrategy } from '@angular/
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Observable, map } from 'rxjs';
-import { GraphData, GraphNode, GraphConfig } from '../core/graph.model';
+import { GraphData } from '../core/graph.model';
 import { GraphViewportComponent } from '../components/graph-viewport/graph-viewport';
 import { GraphInspectorComponent } from '../components/graph-inspector/graph-inspector';
 import { GraphHierarchyService } from '../services/graph-hierarchy.service';
 import { GraphStateService } from '../services/graph-state.service';
-
-const getNodeId = (target: string | GraphNode): string => {
-  return typeof target === 'object' ? target.id : target;
-};
+import { countConnections, normalizeGraphData } from '../core/graph-normalize';
 
 @Component({
   selector: 'app-root',
@@ -54,25 +51,15 @@ export class AppComponent implements OnInit {
     );
   }
 
-  onConfigChanged(newConfig: GraphConfig): void {
-    this.hierarchy.setConfig(newConfig);
-
-    const currentData = this.state.graphData;
-    if (currentData) {
-      const updatedClusters = this.hierarchy.buildClusterGroups(currentData.nodes);
-      this.state.setClusterGroups(updatedClusters);
-    }
-
-    this.viewport.applyPhysicsSettings();
-  }
 
   private loadGraphData(): void {
-    const primaryUrl = '/data.json';
+    // Relative URLs so the static bundle works from any sub-path (and behind the dev proxy).
+    const primaryUrl = 'data.json';
 
     this.http.get<GraphData>(primaryUrl).subscribe({
       next: (data) => this.initGraphPayload(data),
       error: () => {
-        this.http.get<GraphData>('/api/data').subscribe({
+        this.http.get<GraphData>('api/data').subscribe({
           next: (data) => this.initGraphPayload(data),
           error: (err) => console.error('Failed to load graph data payload:', err)
         });
@@ -81,19 +68,14 @@ export class AppComponent implements OnInit {
   }
 
   private initGraphPayload(data: GraphData): void {
-    data.nodes.forEach(n => (n.connectionCount = 0));
-
-    data.links.forEach(l => {
-      const sId = getNodeId(l.source);
-      const tId = getNodeId(l.target);
-      const sNode = data.nodes.find(n => n.id === sId);
-      const tNode = data.nodes.find(n => n.id === tId);
-
-      if (sNode) sNode.connectionCount = (sNode.connectionCount || 0) + 1;
-      if (tNode) tNode.connectionCount = (tNode.connectionCount || 0) + 1;
-    });
+    const report = normalizeGraphData(data);
+    console.info(
+      `[graph] merged ${report.mergedDuplicates} duplicate nodes, added ${report.addedDocLinks} doc dependencies` +
+        (report.unresolvedDocRefs.length ? `, ${report.unresolvedDocRefs.length} doc refs not in graph` : '')
+    );
 
     const clusterGroups = this.hierarchy.buildClusterGroups(data.nodes);
+    countConnections(data);
     this.state.setClusterGroups(clusterGroups);
     this.state.setGraphData(data);
   }
