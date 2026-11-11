@@ -1,1 +1,22 @@
-<p>graph-inspector works!</p>
+<div id="info-panel" [class.is-collapsed]="isCollapsed">
+  <div class="panel-header">
+    <div class="panel-title">{{ title }}</div>
+    <button class="panel-toggle-btn" (click)="toggleCollapse()">
+      {{ isCollapsed ? '' : '' }}
+    </button>
+  </div>
+  <div class="tabs">
+    <button class="tab-btn" [class.active]="activeTab === 'details'" (click)="activeTab = 'details'">Details</button>
+    <button class="tab-btn" [class.active]="activeTab === 'docs'" (click)="activeTab = 'docs'">Docs</button>
+  </div>
+  <div class="panel-content">
+    <div *ngIf="activeTab === 'details'">
+      <div class="property" *ngFor="let prop of properties">
+        <div class="prop-title">{{ prop.name }}</div>
+        <div class="value-box">{{ prop.value }}</div>
+      </div>
+    </div>
+    <div *ngIf="activeTab === 'docs'" class="markdown-rendered" [innerHTML]="documentation">
+    </div>
+  </div>
+</div>

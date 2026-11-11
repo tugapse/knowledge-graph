@@ -1,13 +1,13 @@
 import { Component, OnInit, ViewChild, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
+import { RouterOutlet } from '@angular/router';
 import { Observable, map } from 'rxjs';
 import { GraphData, GraphNode, GraphConfig } from '../core/graph.model';
 import { GraphViewportComponent } from '../components/graph-viewport/graph-viewport';
 import { GraphHudComponent } from '../components/graph-hud/graph-hud';
 import { GraphInspectorComponent } from '../components/graph-inspector/graph-inspector';
 import { GraphSearchComponent } from '../components/graph-search/graph-search';
-import { GraphConfigComponent } from '../components/graph-config/graph-config';
 import { GraphHierarchyService } from '../services/graph-hierarchy.service';
 import { GraphStateService } from '../services/graph-state.service';
 
@@ -20,11 +20,11 @@ const getNodeId = (target: string | GraphNode): string => {
   standalone: true,
   imports: [
     CommonModule,
+    RouterOutlet,
     GraphSearchComponent,
     GraphViewportComponent,
     GraphHudComponent,
-    GraphInspectorComponent,
-    GraphConfigComponent
+    GraphInspectorComponent
   ],
   templateUrl: './app.html',
   styleUrls: ['./app.scss'],
@@ -73,13 +73,11 @@ export class AppComponent implements OnInit {
   }
 
   private loadGraphData(): void {
-    const isStaticHost = window.location.pathname.endsWith('.html') || window.location.protocol === 'file:';
-    const primaryUrl = isStaticHost ? './assets/data.json' : 'assets/data.json';
+    const primaryUrl = '/data.json';
 
     this.http.get<GraphData>(primaryUrl).subscribe({
       next: (data) => this.initGraphPayload(data),
       error: () => {
-        // Fallback endpoint
         this.http.get<GraphData>('/api/data').subscribe({
           next: (data) => this.initGraphPayload(data),
           error: (err) => console.error('Failed to load graph data payload:', err)

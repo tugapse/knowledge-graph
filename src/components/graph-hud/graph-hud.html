@@ -1,1 +1,8 @@
-<p>graph-hud works!</p>
+<div class="hud-labels-layer">
+  <!-- Dynamic labels will be injected here -->
+  <div class="hud-floating-pill" [class.is-target]="isTarget">
+    <span class="hud-cluster-badge">
+      <span>{{ label }}</span>
+    </span>
+  </div>
+</div>
