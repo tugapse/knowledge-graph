@@ -398,28 +398,26 @@ def load_graph_data(knowledge_dir: str, docs_dir: str = None, root_paths: list[s
     return {"nodes": all_nodes, "links": resolved_links}
 
 
-def build_production_bundle(knowledge_dir: str, docs_dir: str, output_dir: str, root_paths: list[str] = None):
-    project_root = Path(__file__).resolve().parent.parent
-    out_path = Path(output_dir)
+def build_production_bundle(knowledge_dir: str, docs_dir: str, output_dir: str, root_paths: list[str] = None,
+                            skip_client_build: bool = False):
+    from frontend import build_frontend, ensure_frontend
+
+    out_path = Path(output_dir).resolve()
+
+    print(f"\n{CYAN}=== BUILDING STATIC PRODUCTION BUNDLE ==={NC}")
+    client_dist = ensure_frontend() if skip_client_build else build_frontend()
+    if out_path == client_dist.resolve() or client_dist.resolve() in out_path.parents:
+        print(f"{RED}[Error]{NC} Output directory cannot be inside the client build output ({client_dist}).")
+        sys.exit(1)
+
     out_path.mkdir(parents=True, exist_ok=True)
-    client_dir = project_root / "client"
+    shutil.copytree(client_dist, out_path, dirs_exist_ok=True)
+    print(f"{GREEN}[OK]{NC} Copied client from {client_dist}")
 
-    print(f"\n{CYAN}=== A COMPILAR PROD BUILD ESTÁTICO ==={NC}")
-    # Passamos os root_paths para a extração
     graph_data = load_graph_data(knowledge_dir, docs_dir, root_paths)
-
     json_dest = out_path / "data.json"
     with open(json_dest, "w", encoding="utf-8") as f:
         json.dump(graph_data, f, ensure_ascii=False)
-    print(f"{GREEN}[OK]{NC} Gravado {json_dest}")
+    print(f"{GREEN}[OK]{NC} Wrote {json_dest}")
 
-    if not client_dir.exists():
-        print(f"{RED}[Erro]{NC} diretório client/ não encontrado.")
-        sys.exit(1)
-
-    for asset in client_dir.iterdir():
-        if asset.is_file():
-            shutil.copy2(asset, out_path / asset.name)
-            print(f"{GREEN}[OK]{NC} Gravado {out_path / asset.name}")
-
-    print(f"\n{GREEN}✔ Build concluído com sucesso em: {out_path.resolve()}{NC}")
+    print(f"\n{GREEN}✔ Build finished: {out_path}{NC}")

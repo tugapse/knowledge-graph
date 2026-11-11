@@ -28,13 +28,18 @@ ng generate --help
 
 ## Building
 
-To build the project run:
+`npm run build` compiles the Angular client into `dist/knowledge-graph/browser` (minified, hashed, relative `base href` so it works from any sub-path).
+
+The Python entry point drives it:
 
 ```bash
-ng build
+./run.sh -k ./knowledge -d ./docs                    # serve on :8080 (builds the client if no build exists)
+./run.sh -k ./knowledge -d ./docs --rebuild-client   # npm run build, then serve
+./run.sh -k ./knowledge -d ./docs -b ./dist/site     # npm run build + data.json -> static bundle
+./run.sh -k ./knowledge -b ./dist/site --skip-client-build   # refresh data.json only
 ```
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+The static bundle is plain files; host it with any web server (e.g. `python3 -m http.server -d dist/site`).
 
 ## Running unit tests
 
