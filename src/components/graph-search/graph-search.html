@@ -1,0 +1,75 @@
+<div class="search" #containerRef [class.is-focused]="isFocused" [class.is-open]="isOpen">
+  <div class="search-field">
+    <svg class="search-icon" viewBox="0 0 16 16" width="14" height="14" aria-hidden="true">
+      <circle cx="7" cy="7" r="4.75" fill="none" stroke="currentColor" stroke-width="1.6" />
+      <path d="M10.5 10.5 14 14" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
+    </svg>
+    <input
+      #searchInput
+      type="text"
+      class="search-input"
+      placeholder="Search nodes, paths, keywords…"
+      autocomplete="off"
+      spellcheck="false"
+      role="combobox"
+      aria-label="Search the graph"
+      aria-controls="graph-search-results"
+      [attr.aria-expanded]="isOpen"
+      [attr.aria-activedescendant]="isOpen && results.length ? 'search-opt-' + activeIndex : null"
+      (input)="onInput($event)"
+      (keydown)="onInputKeydown($event)"
+      (focus)="onFocus()"
+      (blur)="onBlur()"
+    />
+    <button *ngIf="query" type="button" class="clear-btn" (click)="clear()" aria-label="Clear search">×</button>
+    <kbd *ngIf="!query && !isFocused" class="kbd">/</kbd>
+  </div>
+
+  <div *ngIf="isOpen" class="search-panel" role="listbox" id="graph-search-results">
+    <header class="panel-head">
+      <span class="head-count">
+        <ng-container *ngIf="totalMatches; else noMatches">
+          {{ totalMatches }} {{ totalMatches === 1 ? 'MATCH' : 'MATCHES' }}
+          <span *ngIf="totalMatches > results.length" class="head-sub">· showing top {{ results.length }}</span>
+        </ng-container>
+        <ng-template #noMatches>NO MATCHES</ng-template>
+      </span>
+      <span class="head-keys"><kbd>↑</kbd><kbd>↓</kbd> navigate <kbd>↵</kbd> open <kbd>esc</kbd> close</span>
+    </header>
+
+    <div class="results" #resultsRef>
+      <button
+        *ngFor="let r of results; let i = index; trackBy: trackResult"
+        type="button"
+        class="result"
+        role="option"
+        [id]="'search-opt-' + i"
+        [attr.data-index]="i"
+        [attr.aria-selected]="i === activeIndex"
+        [class.active]="i === activeIndex"
+        [style.--type-color]="r.color"
+        (mouseenter)="setActive(i)"
+        (mousedown)="$event.preventDefault()"
+        (click)="select(r.node)"
+      >
+        <span class="type-dot" aria-hidden="true"></span>
+        <span class="result-main">
+          <span class="result-top">
+            <span class="result-name"><ng-container *ngFor="let p of r.nameParts"><mark *ngIf="p.hit">{{ p.text }}</mark><ng-container *ngIf="!p.hit">{{ p.text }}</ng-container></ng-container></span>
+            <span *ngIf="r.matchedOn" class="match-hint">in {{ r.matchedOn }}</span>
+          </span>
+          <span class="result-path">{{ r.node.id }}</span>
+          <span *ngIf="r.node.semantic_summary" class="result-summary">{{ r.node.semantic_summary }}</span>
+        </span>
+        <span class="result-side">
+          <span class="type-badge">{{ r.node.group || 'node' }}</span>
+          <span class="cluster">{{ r.cluster }}</span>
+        </span>
+      </button>
+
+      <p *ngIf="!results.length" class="empty">
+        Nothing matches “{{ query.trim() }}”. Try a class name, a file path, or a keyword.
+      </p>
+    </div>
+  </div>
+</div>

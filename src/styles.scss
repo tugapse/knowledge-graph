@@ -1,0 +1,83 @@
+:root {
+    --hud-cyan: #00f0ff;
+    --hud-cyan-dim: rgba(0, 240, 255, 0.22);
+    --hud-cyan-glow: rgba(0, 240, 255, 0.5);
+    --hud-dark: rgba(2, 11, 20, 0.94);
+    --hud-dark-solid: #030a13;
+    --hud-red: #ff3344;
+    --hud-green: #00ffaa;
+    --text-main: #f1f5f9;
+    --text-muted: #94a3b8;
+}
+
+* { box-sizing: border-box; }
+
+/* The app is a fixed full-screen canvas: never let the document scroll, not even
+   programmatically (focus moves would otherwise shift the whole UI by a few px). */
+html, body { height: 100%; overflow: clip; }
+
+/* Inline canvases leave a descender gap that made the page 8px taller than the window. */
+canvas { display: block; }
+
+body {
+    margin: 0;
+    background-color: var(--hud-dark-solid);
+    color: var(--text-main);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    overflow: hidden;
+    user-select: none;
+    -webkit-font-smoothing: antialiased;
+}
+
+.hologram-overlay {
+    position: absolute; top: 0; left: 0; width: 100vw; height: 100vh;
+    pointer-events: none; z-index: 5;
+    background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.2) 50%), linear-gradient(90deg, rgba(0, 240, 255, 0.015), rgba(0, 0, 0, 0) 2px);
+    background-size: 100% 3px, 60px 100%;
+}
+
+@keyframes pulse { 
+    0%, 100% { opacity: 1; transform: scale(1); } 
+    50% { opacity: 0.35; transform: scale(0.8); } 
+}
+
+#hud-topbar {
+    position: absolute; top: 0; left: 0; width: 100vw; height: 52px;
+    background: linear-gradient(180deg, rgba(2, 16, 32, 0.98) 0%, rgba(2, 16, 32, 0) 100%);
+    display: flex; justify-content: space-between; align-items: center; padding: 0 28px;
+    z-index: 20; border-bottom: 1px solid var(--hud-cyan-dim);
+    font-family: 'Orbitron', monospace; letter-spacing: 1.5px;
+}
+.hud-logo { font-size: 13px; font-weight: 800; color: var(--hud-cyan); text-shadow: 0 0 10px var(--hud-cyan-glow); display: flex; align-items: center; gap: 10px; }
+.hud-status { display: flex; gap: 24px; font-size: 11px; color: #7dd3fc; }
+.status-item span { color: var(--hud-cyan); font-weight: bold; }
+.pulse-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--hud-cyan); box-shadow: 0 0 8px var(--hud-cyan); animation: pulse 1.5s infinite; }
+
+#info-panel {
+    position: absolute; top: 72px; left: 24px;
+    width: min(500px, calc(100vw - 48px));
+    height: auto;
+    max-height: min(68vh, 620px);
+    min-height: 180px;
+    background: var(--hud-dark);
+    border: 1px solid var(--hud-cyan-dim);
+    border-left: 3px solid var(--hud-cyan);
+    padding: 22px;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6), 0 0 25px rgba(0, 240, 255, 0.1);
+    backdrop-filter: blur(16px);
+    z-index: 10; display: flex; flex-direction: column;
+    clip-path: polygon(0 0, calc(100% - 16px) 0, 100% 16px, 100% 100%, 0 100%);
+    transition: width 0.25s ease, max-height 0.25s ease, padding 0.25s ease, opacity 0.2s ease, border-width 0.2s ease, transform 0.2s ease;
+    overflow: hidden;
+}
+
+#controls-hud {
+    position: absolute; bottom: 20px; left: 24px; z-index: 10;
+    display: flex; align-items: center; gap: 16px;
+    background: var(--hud-dark); border: 1px solid var(--hud-cyan-dim);
+    padding: 8px 18px; border-radius: 2px; font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; color: #7dd3fc; box-shadow: 0 0 15px rgba(0, 240, 255, 0.1);
+}
+
+.markdown-rendered { font-size: 13px; line-height: 1.6; color: var(--text-muted); }
+#info-panel.is-collapsed { width: 40px; height: 40px; padding: 0; opacity: 0.7; }

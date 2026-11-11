@@ -1,33 +1,22 @@
 #!/usr/bin/env bash
+set -euo pipefail
 
 SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
-export PYTHONPATH="${SCRIPT_DIR}${PYTHONPATH:+:${PYTHONPATH}}"
+export PYTHONPATH="${SCRIPT_DIR}/server${PYTHONPATH:+:${PYTHONPATH}}"
 
-usage() {
+if [[ "${1:-}" == "-h" || "${1:-}" == "--help" ]]; then
     echo "Knowledge Graph Runner"
     echo ""
     echo "Usage:"
-    echo "  ./run.sh [--build-minified] [python args...]"
+    echo "  ./run.sh [python args...]"
     echo ""
     echo "Examples:"
-    echo "  ./run.sh -k ./knowledge -d ./docs"
-    echo "  ./run.sh --build-minified -k ./knowledge -d ./docs -b ./dist -r ai"
-}
-
-if [[ "${1:-}" == "-h" || "${1:-}" == "--help" ]]; then
-    usage
+    echo "  ./run.sh -k ./knowledge -d ./docs                    # serve (builds the client if needed)"
+    echo "  ./run.sh -k ./knowledge -d ./docs --rebuild-client   # serve after a fresh npm run build"
+    echo "  ./run.sh -k ./knowledge -d ./docs -b ./dist/site     # npm run build + static bundle"
+    echo ""
+    "${PYTHON_ENTRY:-python3}" "$SCRIPT_DIR/server/main.py" --help
     exit 0
 fi
 
-# Check if the first argument is --build-minified
-if [[ "${1:-}" == "--build-minified" ]]; then
-    shift # Remove the --build-minified flag from the arguments list
-    
-    # Call the build-minified.sh script with the remaining arguments
-    "$SCRIPT_DIR/build-minified.sh" "$@"
-    exit $?
-fi
-
-# Otherwise, run the standard Python entry
-PYTHON_ENTRY="${PYTHON_ENTRY:-python3}"
-"$PYTHON_ENTRY" "$SCRIPT_DIR/src/main.py" "$@"
+exec "${PYTHON_ENTRY:-python3}" "$SCRIPT_DIR/server/main.py" "$@"

@@ -1,0 +1,69 @@
+<button *ngIf="!isOpen" type="button" class="style-toggle" (click)="toggle()" title="Graph style settings">
+  STYLE
+</button>
+
+<aside *ngIf="isOpen" class="style-panel">
+  <header class="style-header">
+    <h2 class="style-title">GRAPH STYLE</h2>
+    <div class="style-actions">
+      <button type="button" class="ghost-btn" (click)="resetAll()" title="Restore every setting to its default">RESET ALL</button>
+      <button type="button" class="ghost-btn" (click)="toggle()">HIDE</button>
+    </div>
+  </header>
+
+  <div class="style-body">
+    <ng-container *ngFor="let group of groups">
+      <h3 class="group-title">{{ group.title }}</h3>
+
+      <section
+        *ngFor="let section of group.sections; trackBy: trackSection"
+        class="style-section"
+        [class.open]="openSections.has(section.id)"
+      >
+        <button type="button" class="section-head" (click)="toggleSection(section.id)">
+          <span class="chevron">▸</span> {{ section.title }}
+        </button>
+
+        <div *ngIf="openSections.has(section.id)" class="section-body">
+          <p *ngIf="section.note" class="section-note">{{ section.note }}</p>
+
+          <label *ngFor="let c of section.colors" class="color-row" [title]="c.hint || ''">
+            <input type="color" [ngModel]="get(c.path)" (ngModelChange)="set(c.path, $event)" />
+            <span class="row-label">{{ c.label }}</span>
+            <span class="row-hint">{{ c.hint }}</span>
+            <code class="row-value">{{ get(c.path) }}</code>
+          </label>
+
+          <div *ngIf="section.swatches" class="level-grid">
+            <label *ngFor="let c of section.swatches" class="level-swatch">
+              <input type="color" [ngModel]="get(c.path)" (ngModelChange)="set(c.path, $event)" />
+              <span>{{ c.label }}</span>
+            </label>
+          </div>
+
+          <label *ngFor="let t of section.toggles" class="toggle-row">
+            <input type="checkbox" [ngModel]="get(t.path)" (ngModelChange)="set(t.path, $event)" />
+            <span class="row-label">{{ t.label }}</span>
+          </label>
+
+          <label *ngFor="let s of section.sliders" class="slider-row">
+            <span class="row-label">{{ s.label }}</span>
+            <input
+              type="range"
+              [min]="s.min"
+              [max]="s.max"
+              [step]="s.step"
+              [ngModel]="get(s.path)"
+              (ngModelChange)="set(s.path, $event)"
+            />
+            <code class="row-value">{{ fmt(get(s.path), s.step) }}</code>
+          </label>
+
+          <button type="button" class="link-btn" (click)="resetSection(section)">reset section</button>
+        </div>
+      </section>
+    </ng-container>
+  </div>
+
+  <footer class="style-footer">Changes apply live and are saved in this browser.</footer>
+</aside>

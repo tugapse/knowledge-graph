@@ -30,7 +30,7 @@ def parse_arguments():
             "  1) Point -k to your knowledge directory (required).\n"
             "  2) Optionally point -d to your docs directory.\n"
             "  3) Start the local viewer with -p or just use the default port 8080.\n"
-            "  4) Use -b to generate a static bundle instead of starting the server.\n"
+            "  4) Use -b to build the client (npm run build) and a static bundle instead of starting the server.\n"
             "  5) Use -r to specify root paths to strip for cleaner hierarchies (e.g. src/ai).\n\n"
             "Examples:\n"
             "  python main.py -k ./knowledge -d ./docs\n"
@@ -68,9 +68,22 @@ def parse_arguments():
         "--build",
         dest="build_dir",
         nargs="?",
-        const="./dist",
+        const="./dist/site",
         default=None,
-        help="Build a static bundle into this directory instead of starting the server.",
+        help="Build a static bundle (client + data.json) into this directory instead of starting the server. "
+        "Default when the flag has no value: ./dist/site.",
+    )
+    parser.add_argument(
+        "--skip-client-build",
+        dest="skip_client_build",
+        action="store_true",
+        help="With -b: reuse the existing client build instead of running npm run build.",
+    )
+    parser.add_argument(
+        "--rebuild-client",
+        dest="rebuild_client",
+        action="store_true",
+        help="Server mode: run npm run build before serving (otherwise only when no build exists).",
     )
     parser.add_argument(
         "-r",
@@ -97,12 +110,11 @@ def main():
         sys.exit(1)
     
     if args.build_dir:
-        # Passa a lista de root_paths para o bundle
-        build_production_bundle(abs_knowledge_dir, abs_docs_dir, abs_build_dir, args.root_paths)
+        build_production_bundle(abs_knowledge_dir, abs_docs_dir, abs_build_dir, args.root_paths,
+                                skip_client_build=args.skip_client_build)
         return 0
 
-    # Passa a lista de root_paths para o servidor
-    run_server(abs_knowledge_dir, abs_docs_dir, args.port, args.root_paths)
+    run_server(abs_knowledge_dir, abs_docs_dir, args.port, args.root_paths, rebuild_client=args.rebuild_client)
     return 0
 
 
