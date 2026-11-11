@@ -1,0 +1,282 @@
+<aside class="inspector-panel" [class.collapsed]="isCollapsed" [style.width.px]="panelWidth" *ngIf="focusedNode || focusedCluster">
+  <div class="resize-handle" (mousedown)="onResizeStart($event)"></div>
+
+  <header class="panel-header">
+    <div class="panel-header-top">
+      <div class="panel-heading">
+        <h2 class="panel-title" [title]="panelTitle">{{ panelTitle }}</h2>
+        <span *ngIf="focusedNode" class="panel-subtitle" [title]="focusedNode.id">{{ focusedNode.id }}</span>
+      </div>
+      <div class="panel-actions">
+        <button type="button" class="nav-btn" (click)="onBack()" [disabled]="!canGoBack">BACK</button>
+        <button type="button" class="nav-btn" (click)="toggleCollapse()">
+          {{ isCollapsed ? 'SHOW' : 'HIDE' }}
+        </button>
+      </div>
+    </div>
+
+    <nav *ngIf="!isCollapsed" class="tab-nav" role="tablist">
+      <button type="button" role="tab" class="tab-btn" [class.active]="activeTab === 'specs'" (click)="activeTab = 'specs'">SPECS</button>
+      <button type="button" role="tab" class="tab-btn" [class.active]="activeTab === 'docs'" (click)="activeTab = 'docs'">DOCS</button>
+    </nav>
+  </header>
+
+  <section *ngIf="!isCollapsed" class="panel-body">
+    <!-- SPECS TAB -->
+    <div *ngIf="activeTab === 'specs'" class="tab-content">
+      <!-- 1. Node Selected View -->
+      <ng-container *ngIf="focusedNode; else clusterOrLegendView">
+        <div class="section">
+          <span class="prop-title">CLUSTER HIERARCHY</span>
+          <div class="breadcrumbs">
+            <ng-container *ngFor="let crumb of breadcrumbs; let last = last">
+              <button type="button" class="crumb-link" (click)="onFocusCluster(crumb.path)" title="Focus cluster">{{ crumb.name }}</button>
+              <span *ngIf="!last" class="crumb-separator">/</span>
+            </ng-container>
+          </div>
+        </div>
+
+        <dl class="stat-grid">
+          <div class="stat">
+            <dt>TYPE</dt>
+            <dd class="type-badge">{{ focusedNode.group || 'unknown' }}</dd>
+          </div>
+          <div class="stat">
+            <dt>LINKS</dt>
+            <dd>{{ focusedNode.connectionCount || 0 }}</dd>
+          </div>
+          <div class="stat">
+            <dt>SIBLINGS</dt>
+            <dd>{{ semiHighlightCount }}</dd>
+          </div>
+        </dl>
+
+        <div *ngIf="focusedNode.signature" class="section">
+          <span class="prop-title">SIGNATURE</span>
+          <pre class="signature-box">{{ focusedNode.signature }}</pre>
+        </div>
+
+        <div *ngIf="focusedNode.semantic_summary" class="section">
+          <span class="prop-title">SEMANTIC SUMMARY</span>
+          <p class="value-box">{{ focusedNode.semantic_summary }}</p>
+        </div>
+
+        <div *ngIf="activeNeighbors.length > 0" class="section relation-filter">
+          <div class="filter-head">
+            <span class="prop-title">SHOW CONNECTIONS</span>
+            <button *ngIf="hasActiveRelationFilter" type="button" class="link-reset" (click)="showAllRelations()">show all</button>
+          </div>
+          <div class="filter-chips" role="group" aria-label="Connection types to show">
+            <button
+              *ngFor="let t of relationTypes"
+              type="button"
+              class="filter-chip"
+              [class.off]="!isRelationShown(t.relation)"
+              [attr.aria-pressed]="isRelationShown(t.relation)"
+              [style.--chip-color]="getLinkRgb(t.relation)"
+              (click)="toggleRelation(t.relation)"
+            >
+              <span class="chip-check" aria-hidden="true">{{ isRelationShown(t.relation) ? '✓' : '' }}</span>
+              {{ t.relation }} <span class="chip-count">{{ t.count }}</span>
+            </button>
+            <button
+              *ngIf="externalCount > 0"
+              type="button"
+              class="filter-chip chip-external"
+              [class.off]="!showExternal"
+              [attr.aria-pressed]="showExternal"
+              (click)="toggleExternal()"
+              title="Third-party packages (EXT)"
+            >
+              <span class="chip-check" aria-hidden="true">{{ showExternal ? '✓' : '' }}</span>
+              external <span class="chip-count">{{ externalCount }}</span>
+            </button>
+          </div>
+        </div>
+
+        <div *ngIf="outgoingTotal > 0" class="section">
+          <ng-container *ngTemplateOutlet="sectionHead; context: { key: 'out', title: 'DEPENDS ON / CALLS', count: outgoing.length + (outgoing.length !== outgoingTotal ? ' / ' + outgoingTotal : '') }"></ng-container>
+          <ng-container *ngIf="!isSectionCollapsed('out')">
+            <p class="prop-desc">What this component imports, extends or relies on. Click one to open it.</p>
+            <ng-container *ngTemplateOutlet="relationList; context: { $implicit: outgoing }"></ng-container>
+            <p *ngIf="!outgoing.length" class="muted-note">All {{ outgoingTotal }} hidden by the connection filter.</p>
+          </ng-container>
+        </div>
+
+        <div *ngIf="incomingTotal > 0" class="section">
+          <ng-container *ngTemplateOutlet="sectionHead; context: { key: 'in', title: 'USED BY', count: incoming.length + (incoming.length !== incomingTotal ? ' / ' + incomingTotal : '') }"></ng-container>
+          <ng-container *ngIf="!isSectionCollapsed('in')">
+            <p class="prop-desc">Components that depend on this one, and would be affected if it changes.</p>
+            <ng-container *ngTemplateOutlet="relationList; context: { $implicit: incoming }"></ng-container>
+            <p *ngIf="!incoming.length" class="muted-note">All {{ incomingTotal }} hidden by the connection filter.</p>
+          </ng-container>
+        </div>
+
+        <ng-template #sectionHead let-key="key" let-title="title" let-count="count">
+          <button
+            type="button"
+            class="section-toggle"
+            [class.collapsed]="isSectionCollapsed(key)"
+            [attr.aria-expanded]="!isSectionCollapsed(key)"
+            [title]="isSectionCollapsed(key) ? 'Show ' + title : 'Hide ' + title"
+            (click)="toggleSection(key)"
+          >
+            <span class="toggle-title">{{ title }} <span class="count">{{ count }}</span></span>
+            <span class="toggle-hint">{{ isSectionCollapsed(key) ? 'SHOW' : 'HIDE' }}</span>
+            <span class="toggle-icon" aria-hidden="true">
+              <svg viewBox="0 0 12 12" width="12" height="12"><path d="M3 4.5 6 7.5 9 4.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </span>
+          </button>
+          <p *ngIf="isSectionCollapsed(key)" class="collapsed-note" (click)="toggleSection(key)">
+            {{ count }} {{ count === 1 ? 'item' : 'items' }} hidden. Click to show.
+          </p>
+        </ng-template>
+
+        <ng-template #relationList let-items>
+          <ul class="relation-list">
+            <li
+              *ngFor="let p of items"
+              class="relation-row"
+              [class.is-external]="isExternal(p)"
+              (click)="onFocusNode(p.id)"
+              [title]="p.id"
+            >
+              <span class="rel-name" [style.color]="getLinkRgb(p.relation)">{{ p.relation }}</span>
+              <span class="rel-target">{{ p.name }}</span>
+              <span *ngIf="p.inferred" class="rel-flag" title="Found in the markdown docs, not in the source graph">DOCS</span>
+              <span *ngIf="isExternal(p)" class="rel-flag rel-flag-ext">EXT</span>
+            </li>
+          </ul>
+        </ng-template>
+
+        <div *ngIf="focusedNode.external_dependencies?.length" class="section">
+          <ng-container *ngTemplateOutlet="sectionHead; context: { key: 'pkg', title: 'EXTERNAL PACKAGES', count: focusedNode.external_dependencies?.length }"></ng-container>
+          <ng-container *ngIf="!isSectionCollapsed('pkg')">
+            <p class="prop-desc">Third-party libraries this component imports.</p>
+            <div class="tag-container">
+              <span *ngFor="let dep of focusedNode.external_dependencies" class="tag tag-pkg">{{ dep }}</span>
+            </div>
+          </ng-container>
+        </div>
+
+        <div *ngIf="focusedNode.environment_variables?.length" class="section">
+          <ng-container *ngTemplateOutlet="sectionHead; context: { key: 'env', title: 'ENVIRONMENT VARIABLES', count: focusedNode.environment_variables?.length }"></ng-container>
+          <ng-container *ngIf="!isSectionCollapsed('env')">
+            <p class="prop-desc">Configuration this component reads from the environment.</p>
+            <div class="tag-container">
+              <code *ngFor="let env of focusedNode.environment_variables" class="tag tag-env">{{ env }}</code>
+            </div>
+          </ng-container>
+        </div>
+
+        <div *ngIf="focusedNode.keywords && focusedNode.keywords.length > 0" class="section">
+          <span class="prop-title">KEYWORDS</span>
+          <div class="tag-container">
+            <span *ngFor="let kw of focusedNode.keywords" class="tag">{{ kw }}</span>
+          </div>
+        </div>
+      </ng-container>
+
+      <!-- 2. Cluster Focused View or Default Legend -->
+      <ng-template #clusterOrLegendView>
+        <ng-container *ngIf="focusedCluster && activeClusterGroup; else defaultLegendView">
+          <button
+            *ngIf="activeClusterGroup.parentKey"
+            type="button"
+            class="back-pill"
+            (click)="onFocusCluster(activeClusterGroup.parentKey!)"
+          >
+            ← {{ getShortKey(activeClusterGroup.parentKey!) }}
+            <span class="pill-meta">LEVEL {{ (activeClusterGroup.level || 1) - 1 }}</span>
+          </button>
+
+          <div class="section">
+            <span class="prop-title">SUBSYSTEM DOMAIN</span>
+            <strong class="domain-name">{{ focusedCluster }}</strong>
+          </div>
+
+          <dl class="stat-grid">
+            <div class="stat">
+              <dt>COMPONENTS</dt>
+              <dd>{{ activeClusterGroup.length }}</dd>
+            </div>
+            <div class="stat">
+              <dt>LEVEL</dt>
+              <dd>{{ activeClusterGroup.level || 1 }}</dd>
+            </div>
+            <div class="stat">
+              <dt>SUB-CLUSTERS</dt>
+              <dd>{{ childClusters.length }}</dd>
+            </div>
+          </dl>
+
+          <div *ngIf="childClusters.length > 0; else clusterNodesView" class="section">
+            <span class="prop-title">CHILD SUB-CLUSTERS <span class="count">{{ childClusters.length }}</span></span>
+            <ul class="item-list">
+              <li *ngFor="let cKey of childClusters" class="item-row" (click)="onFocusCluster(cKey)">
+                <span class="item-name">{{ clusterGroups[cKey].shortName || cKey }}</span>
+                <span class="item-meta">{{ clusterGroups[cKey].length }} nodes</span>
+              </li>
+            </ul>
+          </div>
+
+          <ng-template #clusterNodesView>
+            <div class="section">
+              <span class="prop-title">NODES IN CLUSTER <span class="count">{{ activeClusterGroup.length }}</span></span>
+              <ul class="item-list">
+                <li *ngFor="let n of activeClusterGroup" class="item-row" (click)="onFocusNode(n.id)">
+                  <span class="item-name">{{ n.name || n.id }}</span>
+                  <span class="item-meta">{{ n.group || 'node' }}</span>
+                </li>
+              </ul>
+            </div>
+          </ng-template>
+        </ng-container>
+
+        <!-- 3. Default Empty / Legend View -->
+        <ng-template #defaultLegendView>
+          <p class="muted-note">
+            Select a node in the graph to view technical specifications and memory context.
+          </p>
+
+          <div class="section">
+            <span class="prop-title">LINK COLOR LEGEND</span>
+            <div class="legend-list">
+              <div *ngFor="let item of legendItems" class="legend-row">
+                <div
+                  class="legend-line"
+                  [style.background]="'rgb(' + item.color.r + ',' + item.color.g + ',' + item.color.b + ')'"
+                ></div>
+                <span class="legend-label">{{ item.label }}</span>
+              </div>
+            </div>
+          </div>
+        </ng-template>
+      </ng-template>
+    </div>
+
+    <!-- DOCS TAB: rendered markdown, falling back to the extracted summary fields -->
+    <div *ngIf="activeTab === 'docs'" class="tab-content">
+      <ng-container *ngIf="focusedNode; else noDocsView">
+        <div *ngIf="docsHtml; else docsFallback" class="markdown-rendered" [innerHTML]="docsHtml"></div>
+
+        <ng-template #docsFallback>
+          <div *ngIf="focusedNode.human_overview" class="section">
+            <span class="prop-title">OVERVIEW & PURPOSE</span>
+            <p class="value-box">{{ focusedNode.human_overview }}</p>
+          </div>
+          <div *ngIf="focusedNode.side_effects" class="section">
+            <span class="prop-title prop-title-warn">SIDE EFFECTS & BEHAVIOR</span>
+            <p class="value-box value-box-warn">{{ focusedNode.side_effects }}</p>
+          </div>
+          <p *ngIf="!focusedNode.human_overview && !focusedNode.side_effects" class="muted-note">
+            No architectural documentation found for this component.
+          </p>
+        </ng-template>
+      </ng-container>
+      <ng-template #noDocsView>
+        <p class="muted-note">No architectural documentation available for an entire cluster.</p>
+      </ng-template>
+    </div>
+  </section>
+</aside>

@@ -8,10 +8,11 @@ from http.server import SimpleHTTPRequestHandler
 from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
-SRC_DIR = PROJECT_ROOT / "src"
-if str(SRC_DIR) not in sys.path:
-    sys.path.insert(0, str(SRC_DIR))
+SERVER_DIR = Path(__file__).resolve().parent
+if str(SERVER_DIR) not in sys.path:
+    sys.path.insert(0, str(SERVER_DIR))
 
+from frontend import FRONTEND_DIST, ensure_frontend
 from graph_loader import load_graph_data
 
 
@@ -19,9 +20,22 @@ class VisualizerHandler(SimpleHTTPRequestHandler):
     knowledge_dir = "."
     docs_dir = None
     root_paths = None
-    source_dir = PROJECT_ROOT / "client"
+    source_dir = FRONTEND_DIST
+
+    def end_headers(self):
+        # Explicit CORS headers for local inspection and cross-origin fetching
+        self.send_header("Access-Control-Allow-Origin", "*")
+        self.send_header("Access-Control-Allow-Methods", "GET, OPTIONS")
+        self.send_header("Access-Control-Allow-Headers", "X-Requested-With, Content-Type")
+        super().end_headers()
+
+    def do_OPTIONS(self):
+        # Handle preflight requests gracefully
+        self.send_response(200)
+        self.end_headers()
 
     def do_GET(self):
+        self.path = self.path.split("?", 1)[0]
         if self.path in ("/", "/index.html"):
             self.send_response(200)
             self.send_header("Content-type", "text/html; charset=utf-8")
@@ -31,7 +45,8 @@ class VisualizerHandler(SimpleHTTPRequestHandler):
             if html_file.exists():
                 self.wfile.write(html_file.read_bytes())
             else:
-                self.wfile.write(b"<h1>index.html not found!</h1>")
+                # FIXED: Encode the string to bytes to prevent TypeError
+                self.wfile.write("<h1>index.html not found!</h1>".encode("utf-8"))
             return
 
         if self.path in ("/api/data", "/data.json"):
@@ -55,7 +70,9 @@ class VisualizerHandler(SimpleHTTPRequestHandler):
         super().do_GET()
 
 
-def run_server(knowledge_dir: str, docs_dir: str = None, port: int = 8080, root_paths: list[str] = None):
+def run_server(knowledge_dir: str, docs_dir: str = None, port: int = 8080, root_paths: list[str] = None,
+               rebuild_client: bool = False):
+    VisualizerHandler.source_dir = ensure_frontend(rebuild_client)
     VisualizerHandler.knowledge_dir = knowledge_dir
     VisualizerHandler.docs_dir = docs_dir
     VisualizerHandler.root_paths = root_paths or []

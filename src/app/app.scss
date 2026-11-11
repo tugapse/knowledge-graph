@@ -1,0 +1,26 @@
+#hud-topbar {
+    position: absolute; top: 0; left: 0; width: 100vw; height: 52px;
+    background: linear-gradient(180deg, rgba(2, 16, 32, 0.98) 0%, rgba(2, 16, 32, 0) 100%);
+    display: flex; justify-content: space-between; align-items: center; padding: 0 28px;
+    z-index: 20; border-bottom: 1px solid var(--hud-cyan-dim);
+    font-family: 'Orbitron', monospace; letter-spacing: 1.5px;
+}
+.hud-logo { font-size: 13px; font-weight: 800; color: var(--hud-cyan); text-shadow: 0 0 10px var(--hud-cyan-glow); display: flex; align-items: center; gap: 10px; }
+.hud-status { display: flex; gap: 24px; font-size: 11px; color: #7dd3fc; }
+.status-item span { color: var(--hud-cyan); font-weight: bold; }
+.pulse-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--hud-cyan); box-shadow: 0 0 8px var(--hud-cyan); animation: pulse 1.5s infinite; }
+
+#controls-hud {
+    position: absolute; bottom: 20px; left: 24px; z-index: 10;
+    display: flex; align-items: center; gap: 16px;
+    background: var(--hud-dark); border: 1px solid var(--hud-cyan-dim);
+    padding: 8px 18px; border-radius: 2px; font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; color: #7dd3fc; box-shadow: 0 0 15px rgba(0, 240, 255, 0.1);
+}
+.recenter-btn {
+    background: rgba(0, 240, 255, 0.1); border: 1px solid var(--hud-cyan);
+    color: var(--hud-cyan); padding: 5px 12px; font-family: 'Orbitron', sans-serif;
+    font-size: 9px; cursor: pointer; text-transform: uppercase; letter-spacing: 1px;
+    transition: all 0.2s;
+}
+.recenter-btn:hover { background: var(--hud-cyan); color: #000; box-shadow: 0 0 10px var(--hud-cyan); }

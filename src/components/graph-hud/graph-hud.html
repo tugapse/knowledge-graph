@@ -1,0 +1,55 @@
+<div class="hologram-overlay"></div>
+<div class="hud-labels-layer">
+  <!-- Cluster Badges -->
+  <div
+    *ngFor="let badge of visibleBadges; trackBy: trackById"
+    class="hud-cluster-badge"
+    [style.left.px]="badge.x"
+    [style.top.px]="badge.y"
+    [style.opacity]="badge.opacity"
+    [style.borderColor]="badge.borderColor"
+    [style.color]="badge.color"
+    [style.textShadow]="badge.textShadow"
+    [style.fontSize]="badge.fontSize"
+    [style.zIndex]="100 - badge.level"
+    [style.transform]="'translate(-50%, -50%) scale(' + badge.scale + ')'"
+    (click)="onClusterClick(badge.name, $event)"
+  >
+    <span *ngIf="badge.level > 2"> </span>{{ badge.shortName }} <span>[{{ badge.count }}]</span>
+  </div>
+
+  <!-- Node Floating Pills -->
+  <div
+    *ngFor="let pill of visiblePills; trackBy: trackById"
+    class="hud-floating-pill"
+    [class.is-active]="pill.scale > 1"
+    [class.is-target]="pill.isTarget"
+    [style.left.px]="pill.x"
+    [style.top.px]="pill.y"
+    [style.opacity]="pill.opacity"
+    [style.fontSize.px]="pillFontSize"
+    [style.transform]="'translate(-50%, -100%) scale(' + pill.scale + ')'"
+    (click)="onNodeClick(pill.id, $event)"
+  >
+    {{ pill.name }}
+  </div>
+</div>
+
+<div id="hud-topbar">
+  <div class="hud-logo">
+    <span class="pulse-dot"></span>
+    {{ displayTitle }}
+  </div>
+
+  <app-graph-search></app-graph-search>
+
+  <div class="hud-status">
+    <div class="status-item">NODES: {{ nodes.length }}</div>
+    <div class="status-item">GRAPH STATUS: <span>CONNECTED</span></div>
+  </div>
+</div>
+
+<div id="controls-hud">
+  <button class="recenter-btn" (click)="resetCamera()">RE-CENTER VIEW</button>
+  <span>L-CLICK: ROTATE // R-CLICK: PAN // SCROLL: ZOOM // [/]: SEARCH // ESC: DESELECT</span>
+</div>
