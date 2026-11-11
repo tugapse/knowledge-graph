@@ -1,8 +1,52 @@
+<div class="hologram-overlay"></div>
 <div class="hud-labels-layer">
-  <!-- Dynamic labels will be injected here -->
-  <div class="hud-floating-pill" [class.is-target]="isTarget">
-    <span class="hud-cluster-badge">
-      <span>{{ label }}</span>
-    </span>
+  <!-- Cluster Badges -->
+  <div
+    *ngFor="let badge of visibleBadges; trackBy: trackById"
+    class="hud-cluster-badge"
+    [style.left.px]="badge.x"
+    [style.top.px]="badge.y"
+    [style.opacity]="badge.opacity"
+    [style.borderColor]="badge.borderColor"
+    [style.color]="badge.color"
+    [style.textShadow]="badge.textShadow"
+    [style.fontSize]="badge.fontSize"
+    (click)="onClusterClick(badge.name, $event)"
+  >
+    <span *ngIf="badge.level > 2"> </span>{{ badge.shortName }} <span>[{{ badge.count }}]</span>
   </div>
+
+  <!-- Node Floating Pills -->
+  <div
+    *ngFor="let pill of visiblePills; trackBy: trackById"
+    class="hud-floating-pill"
+    [class.is-target]="pill.isTarget"
+    [style.left.px]="pill.x"
+    [style.top.px]="pill.y"
+    [style.opacity]="pill.opacity"
+    (click)="onNodeClick(pill.id, $event)"
+  >
+    {{ pill.name }}
+  </div>
+</div>
+
+<div id="hud-topbar">
+  <div class="hud-logo">
+    <span class="pulse-dot"></span>
+    KNOWLEDGE GRAPH // EXPLORER
+  </div>
+
+  <app-graph-search></app-graph-search>
+
+  <div class="hud-status">
+    <div class="status-item">NODES: {{ nodes.length }}</div>
+    <div class="status-item">GRAPH STATUS: <span>CONNECTED</span></div>
+  </div>
+</div>
+
+<app-graph-inspector></app-graph-inspector>
+
+<div id="controls-hud">
+  <button class="recenter-btn" (click)="resetCamera()">RE-CENTER VIEW</button>
+  <span>L-CLICK: ROTATE // R-CLICK: PAN // SCROLL: ZOOM // [/]: SEARCH // ESC: DESELECT</span>
 </div>

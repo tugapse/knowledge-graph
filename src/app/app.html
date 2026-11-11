@@ -1,29 +1,8 @@
-<div id="hud-topbar">
-  <div class="hud-logo">
-    <span class="pulse-dot"></span>
-    KNOWLEDGE GRAPH // EXPLORER
-  </div>
-
-  <app-graph-search></app-graph-search>
-
-  <div class="hud-status">
-    <div class="status-item">NODES: <span id="stat-nodes">0</span></div>
-    <div class="status-item">EDGES: <span id="stat-edges">0</span></div>
-    <div class="status-item">
-      VECTOR MEMORY: <span id="stat-vectors">READY</span>
-    </div>
-    <div class="status-item">GRAPH STATUS: <span>CONNECTED</span></div>
-  </div>
-</div>
-
-<router-outlet></router-outlet>
-
-<div id="controls-hud">
-  <button class="recenter-btn" (click)="onResetCamera()">
-    RE-CENTER VIEW
-  </button>
-  <span>L-CLICK: ROTATE // R-CLICK: PAN // SCROLL: ZOOM // [/]: SEARCH // ESC: DESELECT</span>
-</div>
+<app-graph-viewport #viewport></app-graph-viewport>
 
 <app-graph-inspector></app-graph-inspector>
-<app-graph-hud></app-graph-hud>
+
+<div id="controls-hud">
+  <button class="recenter-btn">RE-CENTER VIEW</button>
+  <span>L-CLICK: ROTATE // R-CLICK: PAN // SCROLL: ZOOM // [/]: SEARCH // ESC: DESELECT</span>
+</div>

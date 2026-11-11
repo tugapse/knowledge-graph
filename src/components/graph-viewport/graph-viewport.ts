@@ -14,6 +14,7 @@ import { GraphStateService } from '../../services/graph-state.service';
 import { GraphHierarchyService } from '../../services/graph-hierarchy.service';
 import { DEFAULT_GRAPH_CONFIG } from '../../core/graph.config';
 import { GraphNode, GraphConfig, GraphLink } from '../../core/graph.model';
+import { GraphHudComponent } from '../graph-hud/graph-hud';
 
 const getNodeId = (target: string | GraphNode): string => {
   return typeof target === 'object' ? target.id : target;
@@ -22,22 +23,9 @@ const getNodeId = (target: string | GraphNode): string => {
 @Component({
   selector: 'app-graph-viewport',
   standalone: true,
-  imports: [CommonModule],
-  template: `<div #graphCanvas class="graph-viewport-canvas"></div>`,
-  styles: [`
-    :host {
-      display: block;
-      width: 100%;
-      height: 100%;
-      position: absolute;
-      top: 0;
-      left: 0;
-    }
-    .graph-viewport-canvas {
-      width: 100%;
-      height: 100%;
-    }
-  `],
+  imports: [CommonModule, GraphHudComponent],
+  templateUrl: './graph-viewport.html',
+  styleUrl:'./graph-viewport.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class GraphViewportComponent implements OnInit, OnDestroy {
@@ -71,6 +59,12 @@ export class GraphViewportComponent implements OnInit, OnDestroy {
     if (this.graphInstance) {
       this.graphInstance._destructor?.();
       this.graphInstance = null;
+    }
+  }
+
+  public resetCamera(): void {
+    if (this.graphInstance) {
+      this.graphInstance.cameraPosition({ x: 0, y: 0, z: 400 }, { x: 0, y: 0, z: 0 }, 1000);
     }
   }
 

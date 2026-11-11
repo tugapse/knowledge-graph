@@ -13,7 +13,8 @@ import { GraphStateService } from '../../services/graph-state.service';
 import { DEFAULT_GRAPH_CONFIG } from '../../core/graph.config';
 import { ClusterGroup, GraphNode } from '../../core/graph.model';
 import { GraphViewportComponent } from '../graph-viewport/graph-viewport';
-
+import { GraphInspectorComponent } from '../graph-inspector/graph-inspector';
+import { GraphSearchComponent } from '../graph-search/graph-search';
 
 interface ProjectedBadge {
   id: string;
@@ -42,97 +43,9 @@ interface ProjectedPill {
 @Component({
   selector: 'app-graph-hud',
   standalone: true,
-  imports: [CommonModule],
-  template: `
-    <div class="hud-labels-layer">
-      <!-- Cluster Badges -->
-      <div
-        *ngFor="let badge of visibleBadges; trackBy: trackById"
-        class="hud-cluster-badge"
-        [style.left.px]="badge.x"
-        [style.top.px]="badge.y"
-        [style.opacity]="badge.opacity"
-        [style.borderColor]="badge.borderColor"
-        [style.color]="badge.color"
-        [style.textShadow]="badge.textShadow"
-        [style.fontSize]="badge.fontSize"
-        (click)="onClusterClick(badge.name, $event)"
-      >
-        <span *ngIf="badge.level > 2">↳ </span>{{ badge.shortName }} <span>[{{ badge.count }}]</span>
-      </div>
-
-      <!-- Node Floating Pills -->
-      <div
-        *ngFor="let pill of visiblePills; trackBy: trackById"
-        class="hud-floating-pill"
-        [class.is-target]="pill.isTarget"
-        [style.left.px]="pill.x"
-        [style.top.px]="pill.y"
-        [style.opacity]="pill.opacity"
-        (click)="onNodeClick(pill.id, $event)"
-      >
-        {{ pill.name }}
-      </div>
-    </div>
-  `,
-  styles: [`
-    :host {
-      display: block;
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      pointer-events: none;
-      z-index: 10;
-    }
-    .hud-labels-layer {
-      position: relative;
-      width: 100%;
-      height: 100%;
-    }
-    .hud-cluster-badge {
-      position: absolute;
-      transform: translate(-50%, -50%);
-      padding: 3px 8px;
-      border-radius: 12px;
-      background: rgba(3, 10, 19, 0.75);
-      border: 1px solid;
-      font-family: 'Inter', sans-serif;
-      font-weight: 600;
-      letter-spacing: 0.5px;
-      pointer-events: auto;
-      cursor: pointer;
-      user-select: none;
-      transition: opacity 0.2s ease;
-      white-space: nowrap;
-    }
-    .hud-cluster-badge span {
-      opacity: 0.65;
-      font-weight: normal;
-    }
-    .hud-floating-pill {
-      position: absolute;
-      transform: translate(-50%, -50%);
-      background: rgba(2, 16, 32, 0.9);
-      border: 1px solid #00f0ff;
-      border-radius: 4px;
-      padding: 2px 6px;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 10px;
-      color: #e2e8f0;
-      pointer-events: auto;
-      cursor: pointer;
-      user-select: none;
-      white-space: nowrap;
-      transition: opacity 0.15s ease;
-    }
-    .hud-floating-pill.is-target {
-      border-color: #ffffff;
-      color: #ffffff;
-      box-shadow: 0 0 10px rgba(0, 240, 255, 0.6);
-    }
-  `],
+  imports: [CommonModule, GraphInspectorComponent, GraphSearchComponent],
+  templateUrl: './graph-hud.html',
+  styleUrl:'./graph-hud.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class GraphHudComponent implements OnInit, OnDestroy {
@@ -145,18 +58,60 @@ export class GraphHudComponent implements OnInit, OnDestroy {
   private subscriptions = new Subscription();
 
   private clusterGroups: Record<string, ClusterGroup> = {};
-  private nodes: GraphNode[] = [];
-  private focusedNode: GraphNode | null = null;
+  public nodes: GraphNode[] = [];
+  public focusedNode: GraphNode | null = null;
   private focusedClusterPrefix: string | null = null;
   private highlightNodes = new Set<string>();
   private searchMatchingNodes = new Set<string>();
   private selectionIntensity = 0;
+  isInspectorCollapsed = false;
+  activeTab = 'specs';
+  searchQuery = '';
 
   constructor(
     private state: GraphStateService,
     private cdr: ChangeDetectorRef,
     private ngZone: NgZone
   ) {}
+
+  switchTab(tabId: string): void {
+    this.activeTab = tabId;
+    this.cdr.markForCheck();
+  }
+
+  toggleInspectorPanel(): void {
+    this.isInspectorCollapsed = !this.isInspectorCollapsed;
+    this.cdr.markForCheck();
+  }
+
+  onSearchInput(event: Event): void {
+    const query = (event.target as HTMLInputElement).value;
+    this.searchQuery = query;
+    const q = query.trim().toLowerCase();
+    
+    if (!q) {
+      this.state.setSearchMatchingNodes(new Set());
+      return;
+    }
+    
+    const matches = this.nodes.filter(n => 
+      (n.id || '').toLowerCase().includes(q) ||
+      (n.name || '').toLowerCase().includes(q) ||
+      (n.group || '').toLowerCase().includes(q) ||
+      (n.subsystem || '').toLowerCase().includes(q)
+    );
+    this.state.setSearchMatchingNodes(new Set(matches.map(m => m.id)));
+  }
+
+  resetCamera(): void {
+    if (this.viewport) {
+      this.viewport.resetCamera();
+    }
+  }
+
+  goBackInspectorSelection(): void {
+    this.state.selectNode(null);
+  }
 
   ngOnInit(): void {
     this.subscriptions.add(

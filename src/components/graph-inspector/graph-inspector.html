@@ -1,22 +1,236 @@
-<div id="info-panel" [class.is-collapsed]="isCollapsed">
-  <div class="panel-header">
-    <div class="panel-title">{{ title }}</div>
-    <button class="panel-toggle-btn" (click)="toggleCollapse()">
-      {{ isCollapsed ? '' : '' }}
-    </button>
-  </div>
-  <div class="tabs">
-    <button class="tab-btn" [class.active]="activeTab === 'details'" (click)="activeTab = 'details'">Details</button>
-    <button class="tab-btn" [class.active]="activeTab === 'docs'" (click)="activeTab = 'docs'">Docs</button>
-  </div>
-  <div class="panel-content">
-    <div *ngIf="activeTab === 'details'">
-      <div class="property" *ngFor="let prop of properties">
-        <div class="prop-title">{{ prop.name }}</div>
-        <div class="value-box">{{ prop.value }}</div>
+<aside class="inspector-panel" [class.collapsed]="isCollapsed">
+  <!-- Header Tabs -->
+  <header class="panel-header">
+    <div class="panel-header-top">
+      <h2 class="panel-title">{{ panelTitle }}</h2>
+      <div class="panel-actions">
+        <button class="nav-btn" (click)="onBack()" [disabled]="!canGoBack">BACK</button>
+        <button class="toggle-btn" (click)="toggleCollapse()">
+          {{ isCollapsed ? 'SHOW' : 'HIDE' }}
+        </button>
       </div>
     </div>
-    <div *ngIf="activeTab === 'docs'" class="markdown-rendered" [innerHTML]="documentation">
+    <nav class="tab-nav">
+      <button
+        type="button"
+        class="tab-btn"
+        [class.active]="activeTab === 'specs'"
+        (click)="activeTab = 'specs'"
+      >
+        SPECS
+      </button>
+      <button
+        type="button"
+        class="tab-btn"
+        [class.active]="activeTab === 'docs'"
+        (click)="activeTab = 'docs'"
+      >
+        DOCS
+      </button>
+      <button
+        type="button"
+        class="tab-btn"
+        [class.active]="activeTab === 'raw'"
+        (click)="activeTab = 'raw'"
+      >
+        RAW
+      </button>
+    </nav>
+  </header>
+
+  <section class="panel-body">
+    <!-- SPECS TAB -->
+    <div *ngIf="activeTab === 'specs'" class="tab-content">
+      <!-- 1. Node Selected View -->
+      <ng-container *ngIf="focusedNode; else clusterOrLegendView">
+        <div class="property">
+          <span class="prop-title">IDENTIFIER / PATH</span>
+          <strong class="code-val">{{ focusedNode.id }}</strong>
+        </div>
+
+        <div class="property">
+          <span class="prop-title">CLUSTER HIERARCHY (CLICK TO FOCUS)</span>
+          <div class="breadcrumbs">
+            <ng-container *ngFor="let crumb of breadcrumbs; let last = last">
+              <span class="crumb-link" (click)="onFocusCluster(crumb.path)">{{ crumb.name }}</span>
+              <span *ngIf="!last" class="crumb-separator">/</span>
+            </ng-container>
+          </div>
+        </div>
+
+        <div class="property">
+          <span class="prop-title">PARENT CLUSTER SIBLINGS</span>
+          <span class="prop-subtext"
+            >{{ semiHighlightCount }} semi-highlighted in
+            <strong>{{ parentClusterName }}</strong></span
+          >
+        </div>
+
+        <div class="property">
+          <span class="prop-title">COMPONENT TYPE</span>
+          <span class="prop-type">{{ focusedNode.group || 'unknown' }}</span>
+        </div>
+
+        <div class="property">
+          <span class="prop-title">CONNECTIONS (CENTRALITY)</span>
+          <span class="prop-val">{{ focusedNode.connectionCount || 0 }} Links</span>
+        </div>
+
+        <div *ngIf="focusedNode.signature" class="property">
+          <span class="prop-title">SIGNATURE</span>
+          <div class="signature-box">{{ focusedNode.signature }}</div>
+        </div>
+
+        <div *ngIf="focusedNode.semantic_summary" class="property">
+          <span class="prop-title">SEMANTIC SUMMARY</span>
+          <div class="value-box">{{ focusedNode.semantic_summary }}</div>
+        </div>
+
+        <div *ngIf="activeNeighbors.length > 0" class="property">
+          <span class="prop-title">CONNECTED GRAPH RELATIONS ({{ activeNeighbors.length }})</span>
+          <div class="pill-list">
+            <div
+              *ngFor="let p of activeNeighbors"
+              class="pill-item"
+              [style.borderLeftColor]="getLinkRgb(p.relation)"
+              (click)="onFocusNode(p.id)"
+            >
+              <span class="pill-name">{{ p.dir }} {{ p.name }}</span>
+              <span class="pill-relation" [style.color]="getLinkRgb(p.relation)">{{
+                p.relation
+              }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div *ngIf="focusedNode.keywords && focusedNode.keywords.length > 0" class="property">
+          <span class="prop-title">KEYWORDS</span>
+          <div class="tag-container">
+            <span *ngFor="let kw of focusedNode.keywords" class="tag">{{ kw }}</span>
+          </div>
+        </div>
+      </ng-container>
+
+      <!-- 2. Cluster Focused View or Default Legend -->
+      <ng-template #clusterOrLegendView>
+        <ng-container *ngIf="focusedCluster && activeClusterGroup; else defaultLegendView">
+          <div *ngIf="activeClusterGroup.parentKey" class="mb-12">
+            <div
+              class="pill-item action-pill"
+              (click)="onFocusCluster(activeClusterGroup.parentKey!)"
+            >
+              <span class="text-cyan">
+                BACK TO {{ getShortKey(activeClusterGroup.parentKey!) }}</span
+              >
+              <span class="pill-relation">LEVEL {{ (activeClusterGroup.level || 1) - 1 }}</span>
+            </div>
+          </div>
+
+          <div class="property">
+            <span class="prop-title">SUBSYSTEM DOMAIN</span>
+            <strong class="text-cyan font-15">{{ focusedCluster }}</strong>
+          </div>
+
+          <div class="property">
+            <span class="prop-title">COMPONENTS DETECTED</span>
+            <span class="prop-val">{{ activeClusterGroup.length }}</span>
+          </div>
+
+          <div *ngIf="childClusters.length > 0; else clusterNodesView" class="property">
+            <span class="prop-title">CHILD SUB-CLUSTERS ({{ childClusters.length }})</span>
+            <div class="pill-list">
+              <div
+                *ngFor="let cKey of childClusters"
+                class="pill-item"
+                (click)="onFocusCluster(cKey)"
+              >
+                <span class="text-cyan"> {{ clusterGroups[cKey].shortName || cKey }}</span>
+                <span class="pill-relation">{{ clusterGroups[cKey].length }} nodes</span>
+              </div>
+            </div>
+          </div>
+
+          <ng-template #clusterNodesView>
+            <div class="property">
+              <span class="prop-title">NODES IN CLUSTER ({{ activeClusterGroup.length }})</span>
+              <div class="pill-list">
+                <div
+                  *ngFor="let n of activeClusterGroup"
+                  class="pill-item"
+                  (click)="onFocusNode(n.id)"
+                >
+                  <span class="pill-name"> {{ n.name || n.id }}</span>
+                  <span class="pill-relation">{{ n.group || 'node' }}</span>
+                </div>
+              </div>
+            </div>
+          </ng-template>
+        </ng-container>
+
+        <!-- 3. Default Empty / Legend View -->
+        <ng-template #defaultLegendView>
+          <p class="muted-note">
+            Select a node in the graph to view technical specifications and memory context.
+          </p>
+
+          <div class="property mt-30">
+            <span class="prop-title">LINK (PIPE) COLOR LEGEND</span>
+            <div class="legend-list">
+              <div *ngFor="let item of legendItems" class="legend-row">
+                <div
+                  class="legend-line"
+                  [style.background]="
+                    'rgb(' + item.color.r + ',' + item.color.g + ',' + item.color.b + ')'
+                  "
+                  [style.boxShadow]="
+                    '0 0 10px rgba(' +
+                    item.color.r +
+                    ',' +
+                    item.color.g +
+                    ',' +
+                    item.color.b +
+                    ', 0.8)'
+                  "
+                ></div>
+                <span class="legend-label">{{ item.label }}</span>
+              </div>
+            </div>
+          </div>
+        </ng-template>
+      </ng-template>
     </div>
-  </div>
-</div>
+
+    <!-- DOCS TAB -->
+    <div *ngIf="activeTab === 'docs'" class="tab-content">
+      <ng-container *ngIf="focusedNode; else noDocsView">
+        <div *ngIf="focusedNode.human_overview" class="property">
+          <span class="prop-title">OVERVIEW & PURPOSE</span>
+          <div class="value-box border-cyan">{{ focusedNode.human_overview }}</div>
+        </div>
+        <div *ngIf="focusedNode.side_effects" class="property">
+          <span class="prop-title">SIDE EFFECTS & BEHAVIOR</span>
+          <div class="value-box border-red text-red">{{ focusedNode.side_effects }}</div>
+        </div>
+        <p *ngIf="!focusedNode.human_overview && !focusedNode.side_effects" class="muted-note">
+          No architectural documentation found for this component.
+        </p>
+      </ng-container>
+      <ng-template #noDocsView>
+        <p class="muted-note">No architectural documentation available for entire cluster.</p>
+      </ng-template>
+    </div>
+
+    <!-- RAW TAB -->
+    <div *ngIf="activeTab === 'raw'" class="tab-content">
+      <div *ngIf="rawHtml; else rawFallback" class="markdown-rendered" [innerHTML]="rawHtml"></div>
+      <ng-template #rawFallback>
+        <pre *ngIf="focusedNode?.raw_markdown; else noRawView" class="raw-pre">{{
+          focusedNode?.raw_markdown
+        }}</pre>
+      </ng-template>
+      <ng-template #noRawView>
+        <p class="muted-note">Documentation stream unavailable.</p>
+      </ng-template>
+    </div>
+  </section>
+</aside>
