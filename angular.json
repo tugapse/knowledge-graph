@@ -31,7 +31,9 @@
             ],
             "styles": ["src/styles.scss"],
             "allowedCommonJsDependencies": [
-              "ngraph.forcelayout"
+              "ngraph.forcelayout",
+              "3d-force-graph",
+              "marked"
             ]
           },
           "configurations": {

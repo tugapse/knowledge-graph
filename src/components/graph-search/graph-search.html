@@ -1,13 +1,33 @@
-<div class="hud-search-container">
+<div class="hud-search-container" #containerRef>
   <input
     type="text"
     class="hud-search-input"
     placeholder="SEARCH NODES, KEYWORDS..."
     autocomplete="off"
-    (change)="onInputChange($event)"
+    (input)="onInputChange($event)"
+    (click)="toggleDropdown()"
+    #searchInput
   />
   <span class="hud-search-badge">/</span>
-  <div class="hud-search-results">
-    <!-- Results dynamically rendered here -->
+  <div class="hud-search-results" [style.display]="isDropdownOpen && matchedNodes.length > 0 ? 'flex' : 'none'">
+    <div 
+      class="search-result-item" 
+      *ngFor="let node of matchedNodes" 
+      (click)="onSelectResult(node)">
+      <div class="search-item-header">
+        <div class="search-item-title">{{ node.name || getShortId(node.id) }}</div>
+        <div class="search-item-type">{{ node.group || 'Node' }}</div>
+      </div>
+      <div class="search-item-path">{{ node.id }}</div>
+      <div class="search-item-meta" *ngIf="node.subsystem || (node.keywords && node.keywords.length > 0)">
+        <span class="search-item-subsystem" *ngIf="node.subsystem">{{ node.subsystem }}</span>
+        <span class="search-item-keywords" *ngIf="node.keywords">
+          <span *ngFor="let kw of node.keywords.slice(0, 3)">#{{ kw }}</span>
+        </span>
+      </div>
+      <div class="search-item-summary" *ngIf="node.semantic_summary">
+        {{ node.semantic_summary }}
+      </div>
+    </div>
   </div>
 </div>

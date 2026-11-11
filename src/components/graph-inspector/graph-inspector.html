@@ -1,16 +1,17 @@
-<aside class="inspector-panel" [class.collapsed]="isCollapsed">
+<aside class="inspector-panel" [class.collapsed]="isCollapsed" [style.width.px]="panelWidth" *ngIf="focusedNode || focusedCluster">
+  <div class="resize-handle" (mousedown)="onResizeStart($event)"></div>
   <!-- Header Tabs -->
   <header class="panel-header">
-    <div class="panel-header-top">
-      <h2 class="panel-title">{{ panelTitle }}</h2>
-      <div class="panel-actions">
-        <button class="nav-btn" (click)="onBack()" [disabled]="!canGoBack">BACK</button>
-        <button class="toggle-btn" (click)="toggleCollapse()">
-          {{ isCollapsed ? 'SHOW' : 'HIDE' }}
-        </button>
-      </div>
-    </div>
     <nav class="tab-nav">
+      <div class="panel-header-top">
+        <h2 class="panel-title">{{ panelTitle }}</h2>
+        <div class="panel-actions">
+          <button class="nav-btn" (click)="onBack()" [disabled]="!canGoBack">BACK</button>
+          <button class="toggle-btn" (click)="toggleCollapse()">
+            {{ isCollapsed ? 'SHOW' : 'HIDE' }}
+          </button>
+        </div>
+      </div>
       <button
         type="button"
         class="tab-btn"
@@ -88,19 +89,22 @@
 
         <div *ngIf="activeNeighbors.length > 0" class="property">
           <span class="prop-title">CONNECTED GRAPH RELATIONS ({{ activeNeighbors.length }})</span>
-          <div class="pill-list">
-            <div
-              *ngFor="let p of activeNeighbors"
-              class="pill-item"
-              [style.borderLeftColor]="getLinkRgb(p.relation)"
-              (click)="onFocusNode(p.id)"
-            >
-              <span class="pill-name">{{ p.dir }} {{ p.name }}</span>
-              <span class="pill-relation" [style.color]="getLinkRgb(p.relation)">{{
-                p.relation
-              }}</span>
-            </div>
-          </div>
+          <table class="relations-table">
+            <thead>
+              <tr>
+                <th>DIR</th>
+                <th>RELATION</th>
+                <th>TARGET</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let p of activeNeighbors" (click)="onFocusNode(p.id)">
+                <td class="dir-col">{{ p.dir }}</td>
+                <td class="rel-col" [style.color]="getLinkRgb(p.relation)">{{ p.relation }}</td>
+                <td class="name-col">{{ p.name }}</td>
+              </tr>
+            </tbody>
+          </table>
         </div>
 
         <div *ngIf="focusedNode.keywords && focusedNode.keywords.length > 0" class="property">
@@ -222,7 +226,7 @@
 
     <!-- RAW TAB -->
     <div *ngIf="activeTab === 'raw'" class="tab-content">
-      <div *ngIf="rawHtml; else rawFallback" class="markdown-rendered" [innerHTML]="rawHtml"></div>
+      <div *ngIf="rawHtml; else rawFallback" class="markdown-rendered" [innerHTML]="rawHtml" (click)="onMarkdownClick($event)"></div>
       <ng-template #rawFallback>
         <pre *ngIf="focusedNode?.raw_markdown; else noRawView" class="raw-pre">{{
           focusedNode?.raw_markdown

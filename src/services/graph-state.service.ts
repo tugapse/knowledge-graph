@@ -6,7 +6,7 @@ export interface NeighborRelation {
   id: string;
   name: string;
   relation: string;
-  dir: '' | '';
+  dir: 'OUT' | 'IN' | 'SELF';
 }
 
 @Injectable({
@@ -114,7 +114,7 @@ export class GraphStateService {
           const otherId = isOut ? tId : sId;
           const otherName = otherId.split('#').pop()?.split('/').pop() || otherId;
           const rel = link.relation || (isOut ? 'targets' : 'source');
-          neighbors.push({ id: otherId, name: otherName, relation: rel, dir: isOut ? '' : '' });
+          neighbors.push({ id: otherId, name: otherName, relation: rel, dir: isOut ? 'OUT' : 'IN' });
         }
       });
     }

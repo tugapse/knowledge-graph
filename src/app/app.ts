@@ -1,13 +1,10 @@
 import { Component, OnInit, ViewChild, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
-import { RouterOutlet } from '@angular/router';
 import { Observable, map } from 'rxjs';
 import { GraphData, GraphNode, GraphConfig } from '../core/graph.model';
 import { GraphViewportComponent } from '../components/graph-viewport/graph-viewport';
-import { GraphHudComponent } from '../components/graph-hud/graph-hud';
 import { GraphInspectorComponent } from '../components/graph-inspector/graph-inspector';
-import { GraphSearchComponent } from '../components/graph-search/graph-search';
 import { GraphHierarchyService } from '../services/graph-hierarchy.service';
 import { GraphStateService } from '../services/graph-state.service';
 
@@ -20,10 +17,7 @@ const getNodeId = (target: string | GraphNode): string => {
   standalone: true,
   imports: [
     CommonModule,
-    RouterOutlet,
-    GraphSearchComponent,
     GraphViewportComponent,
-    GraphHudComponent,
     GraphInspectorComponent
   ],
   templateUrl: './app.html',

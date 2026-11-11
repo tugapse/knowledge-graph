@@ -43,6 +43,18 @@ export class GraphSearchComponent implements OnInit, OnDestroy {
         this.allNodes = data?.nodes || [];
       })
     );
+    this.subscriptions.add(
+      this.state.focusedNode$.subscribe(() => {
+        this.isDropdownOpen = false;
+        this.cdr.markForCheck();
+      })
+    );
+    this.subscriptions.add(
+      this.state.focusedCluster$.subscribe(() => {
+        this.isDropdownOpen = false;
+        this.cdr.markForCheck();
+      })
+    );
   }
 
   ngOnDestroy(): void {
@@ -102,12 +114,20 @@ export class GraphSearchComponent implements OnInit, OnDestroy {
     this.matchedNodes = matches.slice(0, 15);
     this.isDropdownOpen = true;
     this.state.setSearchResults(matches);
+    this.cdr.markForCheck();
   }
 
   onSelectResult(node: GraphNode): void {
     this.isDropdownOpen = false;
     this.query = node.name || this.getShortId(node.id);
     this.state.selectNode(node);
+  }
+
+  toggleDropdown(): void {
+    if (this.matchedNodes.length > 0) {
+      this.isDropdownOpen = !this.isDropdownOpen;
+      this.cdr.markForCheck();
+    }
   }
 
   getShortId(id: string): string {

@@ -13,7 +13,6 @@ import { GraphStateService } from '../../services/graph-state.service';
 import { DEFAULT_GRAPH_CONFIG } from '../../core/graph.config';
 import { ClusterGroup, GraphNode } from '../../core/graph.model';
 import { GraphViewportComponent } from '../graph-viewport/graph-viewport';
-import { GraphInspectorComponent } from '../graph-inspector/graph-inspector';
 import { GraphSearchComponent } from '../graph-search/graph-search';
 
 interface ProjectedBadge {
@@ -43,7 +42,7 @@ interface ProjectedPill {
 @Component({
   selector: 'app-graph-hud',
   standalone: true,
-  imports: [CommonModule, GraphInspectorComponent, GraphSearchComponent],
+  imports: [CommonModule, GraphSearchComponent],
   templateUrl: './graph-hud.html',
   styleUrl:'./graph-hud.scss',
   changeDetection: ChangeDetectionStrategy.OnPush

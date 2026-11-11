@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { Subscription } from 'rxjs';
@@ -22,6 +22,7 @@ export class GraphInspectorComponent implements OnInit, OnDestroy {
   panelTitle = 'COMPONENT INSPECTOR';
   isCollapsed = false;
   canGoBack = false;
+  panelWidth = 400;
 
   focusedNode: GraphNode | null = null;
   focusedCluster: string | null = null;
@@ -30,6 +31,7 @@ export class GraphInspectorComponent implements OnInit, OnDestroy {
   childClusters: string[] = [];
 
   breadcrumbs: { name: string; path: string }[] = [];
+  historyStack: string[] = [];
   semiHighlightCount = 0;
   parentClusterName = '';
   activeNeighbors: NeighborRelation[] = [];
@@ -52,6 +54,7 @@ export class GraphInspectorComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
+    console.log('GraphInspectorComponent initialized');
     this.subscriptions.add(
       this.state.clusterGroups$.subscribe(groups => {
         this.clusterGroups = groups;
@@ -105,19 +108,78 @@ export class GraphInspectorComponent implements OnInit, OnDestroy {
   }
 
   onFocusNode(nodeId: string): void {
-    const node = this.state.graphData?.nodes.find(n => n.id === nodeId);
-    if (node) {
-      this.state.selectNode(node);
+    // Strip common extensions
+    const cleanId = nodeId.replace(/\.(ts|js|md|html|scss|css)$/, '');
+    console.log('Attempting to focus node (raw/clean):', nodeId, cleanId);
+    
+    // Try exact match first, then partial match (ends with)
+    let node = this.state.graphData?.nodes.find(n => n.id === cleanId || n.id === nodeId);
+    if (!node) {
+      node = this.state.graphData?.nodes.find(n => n.id.endsWith('/' + cleanId) || n.id.endsWith('/' + nodeId));
     }
+    
+    if (node) {
+      console.log('Node found, selecting:', node);
+      if (this.focusedNode) {
+        this.historyStack.push(this.focusedNode.id);
+      }
+      this.state.selectNode(node);
+      this.canGoBack = this.historyStack.length > 0;
+    } else {
+      console.warn('Node not found in graphData:', nodeId);
+    }
+  }
+
+  @HostListener('click', ['$event'])
+  onMarkdownClick(event: MouseEvent): void {
+    console.log('--- CLICK DETECTED ---', event.target);
+    const target = event.target as HTMLElement;
+    const anchor = target.closest('a');
+    console.log('Found anchor:', anchor);
+    
+    if (anchor) {
+      const href = anchor.getAttribute('href');
+      console.log('Link href:', href);
+      if (href) {
+        event.preventDefault();
+        event.stopPropagation();
+        const nodeId = href.replace(/^#/, '').replace(/^\//, '');
+        console.log('Navigating to:', nodeId);
+        this.onFocusNode(nodeId);
+        return;
+      }
+    }
+    console.log('No valid link navigation triggered');
   }
 
   toggleCollapse(): void {
     this.isCollapsed = !this.isCollapsed;
   }
 
+  onResizeStart(event: MouseEvent): void {
+    event.preventDefault();
+    const onMouseMove = (moveEvent: MouseEvent) => {
+      // Calculate width based on mouse position relative to the right edge (24px margin)
+      this.panelWidth = Math.max(300, Math.min(800, window.innerWidth - moveEvent.clientX - 24));
+      this.cdr.markForCheck();
+    };
+    const onMouseUp = () => {
+      document.removeEventListener('mousemove', onMouseMove);
+      document.removeEventListener('mouseup', onMouseUp);
+    };
+    document.addEventListener('mousemove', onMouseMove);
+    document.addEventListener('mouseup', onMouseUp);
+  }
+
   onBack(): void {
-    // Logic to navigate back in state
-    this.state.goBack();
+    const prevId = this.historyStack.pop();
+    if (prevId) {
+      const node = this.state.graphData?.nodes.find(n => n.id === prevId);
+      if (node) {
+        this.state.selectNode(node);
+      }
+    }
+    this.canGoBack = this.historyStack.length > 0;
   }
 
   getLinkRgb(relation: string): string {
