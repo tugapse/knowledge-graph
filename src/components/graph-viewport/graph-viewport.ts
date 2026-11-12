@@ -23,6 +23,7 @@ const getNodeId = (target: string | GraphNode): string => {
 };
 
 interface Rgba { r: number; g: number; b: number; a: number }
+interface Vec3 { x: number; y: number; z: number }
 
 /** How long a selection change takes to fade nodes/links to their new look. */
 const FADE_MS = 320;
@@ -265,11 +266,66 @@ export class GraphViewportComponent implements OnInit, OnDestroy {
 
     this.subscriptions.add(
       this.state.cameraTarget$.subscribe(target => {
-        if (target && this.graphInstance) {
+        if (!target || !this.graphInstance) return;
+        if (!target.avoidPanel) {
           this.graphInstance.cameraPosition(target.pos, target.lookAt, target.duration);
+          return;
         }
+        // The inspector panel may only render a few frames after selection; wait for it
+        // (bounded) so it can be measured, then frame the target beside it.
+        let framesLeft = 15;
+        const apply = () => {
+          if (!document.querySelector('.inspector-panel') && framesLeft-- > 0) {
+            requestAnimationFrame(apply);
+            return;
+          }
+          const { pos, lookAt } = this.offsetForInspector(target.pos, target.lookAt);
+          this.graphInstance.cameraPosition(pos, lookAt, target.duration);
+        };
+        apply();
       })
     );
+  }
+
+  /**
+   * Slides camera and look-at sideways (along the camera's right axis) so the look-at point
+   * lands in the centre of the free area left of the inspector panel instead of the screen centre.
+   */
+  private offsetForInspector(pos: Vec3, lookAt: Vec3): { pos: Vec3; lookAt: Vec3 } {
+    const panel = document.querySelector('.inspector-panel') as HTMLElement | null;
+    const canvas = this.graphCanvas.nativeElement as HTMLElement;
+    const camera = this.graphInstance.camera?.();
+    if (!panel || !camera) return { pos, lookAt };
+
+    const viewRect = canvas.getBoundingClientRect();
+    const panelLeft = panel.getBoundingClientRect().left - viewRect.left;
+    const width = viewRect.width;
+    const height = viewRect.height;
+    if (panelLeft <= 0 || panelLeft >= width || height <= 0) return { pos, lookAt };
+
+    // Pixels the target must move left: from the screen centre to the centre of [0, panelLeft].
+    const shiftPx = width / 2 - panelLeft / 2;
+
+    const fx = lookAt.x - pos.x, fy = lookAt.y - pos.y, fz = lookAt.z - pos.z;
+    const dist = Math.hypot(fx, fy, fz);
+    if (dist === 0) return { pos, lookAt };
+    const worldPerPx = (2 * dist * Math.tan(((camera.fov || 40) * Math.PI) / 360)) / height;
+    const shift = shiftPx * worldPerPx;
+
+    // Screen-right = forward x camera.up. The trackball controls roll camera.up, so it is not
+    // necessarily +Y; using the real one keeps the shift purely horizontal on screen.
+    const up = camera.up || { x: 0, y: 1, z: 0 };
+    let rx = fy * up.z - fz * up.y;
+    let ry = fz * up.x - fx * up.z;
+    let rz = fx * up.y - fy * up.x;
+    const rLen = Math.hypot(rx, ry, rz);
+    if (rLen < 1e-6) return { pos, lookAt };
+    rx /= rLen; ry /= rLen; rz /= rLen;
+
+    return {
+      pos: { x: pos.x + rx * shift, y: pos.y + ry * shift, z: pos.z + rz * shift },
+      lookAt: { x: lookAt.x + rx * shift, y: lookAt.y + ry * shift, z: lookAt.z + rz * shift }
+    };
   }
 
   /** Physics/DAG changes need cluster centers recomputed and the simulation reheated. */

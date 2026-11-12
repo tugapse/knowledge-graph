@@ -53,6 +53,8 @@ export class GraphStateService {
     pos: { x: number; y: number; z: number };
     lookAt: { x: number; y: number; z: number };
     duration: number;
+    /** Shift the framing so the target sits centred in the space left of the inspector panel. */
+    avoidPanel?: boolean;
   } | null>(null);
   readonly cameraTarget$ = this.cameraTargetSub.asObservable();
 
@@ -83,9 +85,10 @@ export class GraphStateService {
   triggerCameraMove(
     pos: { x: number; y: number; z: number },
     lookAt: { x: number; y: number; z: number },
-    duration = 1200
+    duration = 1200,
+    avoidPanel = false
   ): void {
-    this.cameraTargetSub.next({ pos, lookAt, duration });
+    this.cameraTargetSub.next({ pos, lookAt, duration, avoidPanel });
   }
 
   selectNode(node: GraphNode | null): void {
@@ -165,7 +168,8 @@ export class GraphStateService {
     this.triggerCameraMove(
       { x: nx * distRatio, y: ny * distRatio, z: nz * distRatio },
       { x: nx, y: ny, z: nz },
-      1200
+      1200,
+      true
     );
   }
 
