@@ -69,7 +69,9 @@ export interface GraphStyleConfig {
 /** @deprecated kept for older imports; use GraphStyleConfig. */
 export type NodeStyleConfig = GraphStyleConfig;
 
-const STORAGE_KEY = 'kg.nodeStyle.v1';
+const STORAGE_KEY = 'kg.nodeStyle.v2';
+/** Older saves: everything carries over except link opacity/width, whose defaults got brighter. */
+const LEGACY_STORAGE_KEYS = ['kg.nodeStyle.v1'];
 
 const rgbToHex = ({ r, g, b }: ColorRgb): string =>
   '#' + [r, g, b].map(v => v.toString(16).padStart(2, '0')).join('');
@@ -111,13 +113,13 @@ function buildDefaults(): GraphStyleConfig {
       default: rgbToHex(c.links.default)
     },
     linkOpacities: {
-      idle: 0.25,
-      focused: c.opacities.links.focused,
-      internalCluster: c.opacities.links.internalCluster,
-      siblingCluster: c.opacities.links.siblingCluster,
-      unrelated: c.opacities.links.unrelated
+      idle: 0.5,
+      focused: 1,
+      internalCluster: 0.8,
+      siblingCluster: 0.4,
+      unrelated: 0.14
     },
-    linkWidths: { base: 0.8, highlighted: 2.2, searchMatch: 1.2 },
+    linkWidths: { base: 1.2, highlighted: 3, searchMatch: 1.8 },
     particles: {
       idleCount: 2,
       highlightedCount: 4,
@@ -182,6 +184,7 @@ export class GraphStyleService {
   reset(): void {
     try {
       localStorage.removeItem(STORAGE_KEY);
+      LEGACY_STORAGE_KEYS.forEach(k => localStorage.removeItem(k));
     } catch {
       /* storage unavailable */
     }
@@ -220,7 +223,19 @@ export class GraphStyleService {
     const defaults = buildDefaults();
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
-      return raw ? mergeDeep(defaults, JSON.parse(raw)) : defaults;
+      if (raw) return mergeDeep(defaults, JSON.parse(raw));
+      for (const key of LEGACY_STORAGE_KEYS) {
+        const legacy = localStorage.getItem(key);
+        if (!legacy) continue;
+        const parsed = JSON.parse(legacy);
+        delete parsed.linkOpacities;
+        delete parsed.linkWidths;
+        const migrated = mergeDeep(defaults, parsed);
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(migrated));
+        localStorage.removeItem(key);
+        return migrated;
+      }
+      return defaults;
     } catch {
       return defaults;
     }
