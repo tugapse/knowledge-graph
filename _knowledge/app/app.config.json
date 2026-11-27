@@ -1,0 +1,59 @@
+{
+  "component": {
+    "name": "appConfig",
+    "source_path": "/app/app.config.ts",
+    "doc_path": "/app/app.config.json",
+    "type": "module"
+  },
+  "vector_memory": {
+    "semantic_summary": "This module defines the central application configuration object, `appConfig`, which serves as the dependency injection bootstrap for an Angular application. It configures core functionalities by providing necessary services, including global error listeners, the application's routing structure, and HTTP client capabilities. Its primary role is to initialize the application's operational environment upon startup."
+  },
+  "graph_nodes": [
+    {
+      "id": "/app/app.config.ts#appConfig",
+      "label": "Variable",
+      "name": "appConfig",
+      "signature": "ApplicationConfig"
+    },
+    {
+      "id": "/app/app.config.ts#provideBrowserGlobalErrorListeners",
+      "label": "Function",
+      "name": "provideBrowserGlobalErrorListeners",
+      "signature": "provideBrowserGlobalErrorListeners()"
+    },
+    {
+      "id": "/app/app.config.ts#provideRouter",
+      "label": "Function",
+      "name": "provideRouter",
+      "signature": "provideRouter(routes)"
+    },
+    {
+      "id": "/app/app.config.ts#provideHttpClient",
+      "label": "Function",
+      "name": "provideHttpClient",
+      "signature": "provideHttpClient()"
+    },
+    {
+      "id": "/app/app.config.ts#routes",
+      "label": "Variable",
+      "name": "routes",
+      "signature": "routes"
+    }
+  ],
+  "graph_edges": [
+    {
+      "source": "/app/app.config.ts",
+      "target": "/app/app.routes.md",
+      "relation": "imports"
+    }
+  ],
+  "metadata": {
+    "environment_variables": [],
+    "external_dependencies": [
+      "@angular/core",
+      "@angular/router",
+      "@angular/common/http"
+    ],
+    "has_side_effects": true
+  }
+}

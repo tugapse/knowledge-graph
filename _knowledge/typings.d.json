@@ -1,0 +1,27 @@
+{
+  "component": {
+    "name": "typings",
+    "source_path": "/typings.d.ts",
+    "doc_path": "/typings.d.json",
+    "type": "interface"
+  },
+  "vector_memory": {
+    "semantic_summary": "This component serves as a TypeScript declaration file, defining the structure for the external module '3d-force-graph'. Its sole purpose is to provide static type information to the compiler and static analysis tools. It functions as a foundational layer for type safety, allowing components to utilize the visualization library without needing runtime imports of its concrete code."
+  },
+  "graph_nodes": [
+    {
+      "id": "/typings.d.ts#ModuleDeclaration",
+      "label": "Type",
+      "name": "ModuleDeclaration",
+      "signature": "declare module '3d-force-graph';"
+    }
+  ],
+  "graph_edges": [],
+  "metadata": {
+    "environment_variables": [],
+    "external_dependencies": [
+      "3d-force-graph"
+    ],
+    "has_side_effects": false
+  }
+}

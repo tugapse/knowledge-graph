@@ -1,0 +1,76 @@
+{
+  "component": {
+    "name": "AppComponent",
+    "source_path": "/app/app.spec.ts",
+    "doc_path": "/app/app.spec.json",
+    "type": "script"
+  },
+  "vector_memory": {
+    "semantic_summary": "This script serves as a unit test suite for the AppComponent, utilizing Angular's TestBed to configure a minimal testing environment. It specifically tests the initialization process by ensuring the component instance can be successfully created and is truthy. The setup involves providing HTTP client testing services to the testing module configuration."
+  },
+  "graph_nodes": [
+    {
+      "id": "/app/app.spec.ts#describe",
+      "label": "Function",
+      "name": "describe",
+      "signature": "describe('AppComponent', () => {})"
+    },
+    {
+      "id": "/app/app.spec.ts#beforeEach",
+      "label": "Function",
+      "name": "beforeEach",
+      "signature": "beforeEach(async () => {})"
+    },
+    {
+      "id": "/app/app.spec.ts#it",
+      "label": "Function",
+      "name": "it",
+      "signature": "it('should create the app', () => {})"
+    },
+    {
+      "id": "/app/app.spec.ts#TestBed",
+      "label": "Type",
+      "name": "TestBed",
+      "signature": "TestBed.configureTestingModule({...})"
+    },
+    {
+      "id": "/app/app.spec.ts#AppComponent",
+      "label": "Type",
+      "name": "AppComponent",
+      "signature": "AppComponent"
+    },
+    {
+      "id": "/app/app.spec.ts#fixture",
+      "label": "Variable",
+      "name": "fixture",
+      "signature": "const fixture = TestBed.createComponent(AppComponent);"
+    },
+    {
+      "id": "/app/app.spec.ts#app",
+      "label": "Variable",
+      "name": "app",
+      "signature": "const app = fixture.componentInstance;"
+    }
+  ],
+  "graph_edges": [
+    {
+      "source": "/app/app.spec.ts",
+      "target": "/app/app.ts",
+      "relation": "imports"
+    },
+    {
+      "source": "/app/app.spec.ts",
+      "target": "/app/app.ts",
+      "relation": "imports"
+    }
+  ],
+  "metadata": {
+    "environment_variables": [],
+    "external_dependencies": [
+      "@angular/core/testing",
+      "@angular/common/http",
+      "@angular/common/http/testing"
+    ],
+    "has_side_effects": false
+  }
+}

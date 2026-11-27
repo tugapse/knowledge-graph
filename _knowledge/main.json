@@ -1,0 +1,50 @@
+{
+  "component": {
+    "name": "main",
+    "source_path": "/main.ts",
+    "doc_path": "/main.json",
+    "type": "script"
+  },
+  "vector_memory": {
+    "semantic_summary": "This script serves as the application bootstrap entry point, initializing the entire Angular application instance. It utilizes the `bootstrapApplication` function from `@angular/platform-browser` to launch the root component, `AppComponent`. The configuration is sourced from `./app/app.config`. Error handling is implemented via a promise chain to log any bootstrapping failures to the console."
+  },
+  "graph_nodes": [
+    {
+      "id": "/main.ts#bootstrapApplication",
+      "label": "Function",
+      "name": "bootstrapApplication",
+      "signature": "bootstrapApplication(AppComponent, appConfig)"
+    },
+    {
+      "id": "/main.ts#appConfig",
+      "label": "Variable",
+      "name": "appConfig",
+      "signature": "appConfig"
+    },
+    {
+      "id": "/main.ts#AppComponent",
+      "label": "Variable",
+      "name": "AppComponent",
+      "signature": "AppComponent"
+    }
+  ],
+  "graph_edges": [
+    {
+      "source": "/main.ts",
+      "target": "/app/app.config.md",
+      "relation": "imports"
+    },
+    {
+      "source": "/main.ts",
+      "target": "/app/app.md",
+      "relation": "imports"
+    }
+  ],
+  "metadata": {
+    "environment_variables": [],
+    "external_dependencies": [
+      "@angular/platform-browser"
+    ],
+    "has_side_effects": true
+  }
+}

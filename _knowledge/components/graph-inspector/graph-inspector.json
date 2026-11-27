@@ -1,0 +1,229 @@
+{
+  "component": {
+    "name": "GraphInspectorComponent",
+    "source_path": "/components/graph-inspector/graph-inspector.ts",
+    "doc_path": "/components/graph-inspector/graph-inspector.json",
+    "type": "class"
+  },
+  "vector_memory": {
+    "semantic_summary": "GraphInspectorComponent is the primary UI panel responsible for displaying detailed information about selected nodes or clusters within a graph visualization. It aggregates data from GraphStateService and GraphHierarchyService to present comprehensive views, including metadata and documentation. It manages user interactions like navigation history, panel resizing, and filtering relational data based on user-defined criteria."
+  },
+  "graph_nodes": [
+    {
+      "id": "/components/graph-inspector/graph-inspector.ts#GraphInspectorComponent",
+      "label": "Class",
+      "name": "GraphInspectorComponent",
+      "signature": "class GraphInspectorComponent implements OnInit, OnDestroy"
+    },
+    {
+      "id": "/components/graph-inspector/graph-inspector.ts#onFocusCluster",
+      "label": "Method",
+      "name": "onFocusCluster",
+      "signature": "onFocusCluster(clusterName: string): void"
+    },
+    {
+      "id": "/components/graph-inspector/graph-inspector.ts#onFocusNode",
+      "label": "Method",
+      "name": "onFocusNode",
+      "signature": "onFocusNode(nodeId: string): void"
+    },
+    {
+      "id": "/components/graph-inspector/graph-inspector.ts#onMarkdownClick",
+      "label": "Method",
+      "name": "onMarkdownClick",
+      "signature": "onMarkdownClick(event: MouseEvent): void"
+    },
+    {
+      "id": "/components/graph-inspector/graph-inspector.ts#toggleCollapse",
+      "label": "Method",
+      "name": "toggleCollapse",
+      "signature": "toggleCollapse(): void"
+    },
+    {
+      "id": "/components/graph-inspector/graph-inspector.ts#onResizeStart",
+      "label": "Method",
+      "name": "onResizeStart",
+      "signature": "onResizeStart(event: MouseEvent): void"
+    },
+    {
+      "id": "/components/graph-inspector/graph-inspector.ts#onBack",
+      "label": "Method",
+      "name": "onBack",
+      "signature": "onBack(): void"
+    },
+    {
+      "id": "/components/graph-inspector/graph-inspector.ts#getLinkRgb",
+      "label": "Method",
+      "name": "getLinkRgb",
+      "signature": "getLinkRgb(relation: string): string"
+    },
+    {
+      "id": "/components/graph-inspector/graph-inspector.ts#isRelationShown",
+      "label": "Method",
+      "name": "isRelationShown",
+      "signature": "isRelationShown(relation: string): boolean"
+    },
+    {
+      "id": "/components/graph-inspector/graph-inspector.ts#toggleRelation",
+      "label": "Method",
+      "name": "toggleRelation",
+      "signature": "toggleRelation(relation: string): void"
+    },
+    {
+      "id": "/components/graph-inspector/graph-inspector.ts#toggleExternal",
+      "label": "Method",
+      "name": "toggleExternal",
+      "signature": "toggleExternal(): void"
+    },
+    {
+      "id": "/components/graph-inspector/graph-inspector.ts#showAllRelations",
+      "label": "Method",
+      "name": "showAllRelations",
+      "signature": "showAllRelations(): void"
+    },
+    {
+      "id": "/components/graph-inspector/graph-inspector.ts#applyRelationFilters",
+      "label": "Method",
+      "name": "applyRelationFilters",
+      "signature": "applyRelationFilters(): void"
+    },
+    {
+      "id": "/components/graph-inspector/graph-inspector.ts#countRelationTypes",
+      "label": "Method",
+      "name": "countRelationTypes",
+      "signature": "countRelationTypes(neighbors: NeighborRelation[]): { relation: string; count: number }[]"
+    },
+    {
+      "id": "/components/graph-inspector/graph-inspector.ts#readStoredList",
+      "label": "Method",
+      "name": "readStoredList",
+      "signature": "readStoredList(key: string): string[]"
+    },
+    {
+      "id": "/components/graph-inspector/graph-inspector.ts#readStoredFlag",
+      "label": "Method",
+      "name": "readStoredFlag",
+      "signature": "readStoredFlag(key: string, fallback: boolean): boolean"
+    },
+    {
+      "id": "/components/graph-inspector/graph-inspector.ts#store",
+      "label": "Method",
+      "name": "store",
+      "signature": "store(key: string, value: unknown): void"
+    },
+    {
+      "id": "/components/graph-inspector/graph-inspector.ts#isSectionCollapsed",
+      "label": "Method",
+      "name": "isSectionCollapsed",
+      "signature": "isSectionCollapsed(key: string): boolean"
+    },
+    {
+      "id": "/components/graph-inspector/graph-inspector.ts#toggleSection",
+      "label": "Method",
+      "name": "toggleSection",
+      "signature": "toggleSection(key: string): void"
+    },
+    {
+      "id": "/components/graph-inspector/graph-inspector.ts#isExternal",
+      "label": "Method",
+      "name": "isExternal",
+      "signature": "isExternal(n: NeighborRelation): boolean"
+    },
+    {
+      "id": "/components/graph-inspector/graph-inspector.ts#getShortKey",
+      "label": "Method",
+      "name": "getShortKey",
+      "signature": "getShortKey(path: string): string"
+    },
+    {
+      "id": "/components/graph-inspector/graph-inspector.ts#updateNodeView",
+      "label": "Method",
+      "name": "updateNodeView",
+      "signature": "updateNodeView(): void"
+    },
+    {
+      "id": "/components/graph-inspector/graph-inspector.ts#renderDocs",
+      "label": "Method",
+      "name": "renderDocs",
+      "signature": "renderDocs(node: GraphNode): void"
+    },
+    {
+      "id": "/components/graph-inspector/graph-inspector.ts#annotateDocLinks",
+      "label": "Method",
+      "name": "annotateDocLinks",
+      "signature": "annotateDocLinks(html: string): string"
+    },
+    {
+      "id": "/components/graph-inspector/graph-inspector.ts#getResolver",
+      "label": "Method",
+      "name": "getResolver",
+      "signature": "getResolver(): ReturnType<typeof createNodeResolver> | null"
+    },
+    {
+      "id": "/components/graph-inspector/graph-inspector.ts#resolveCluster",
+      "label": "Method",
+      "name": "resolveCluster",
+      "signature": "resolveCluster(href: string): string | null"
+    }
+  ],
+  "graph_edges": [
+    {
+      "source": "/components/graph-inspector/graph-inspector.ts",
+      "target": "/src/services/graph-state.service.md",
+      "relation": "depends_on"
+    },
+    {
+      "source": "/components/graph-inspector/graph-inspector.ts",
+      "target": "/src/services/graph-hierarchy.service.md",
+      "relation": "depends_on"
+    },
+    {
+      "source": "/components/graph-inspector/graph-inspector.ts",
+      "target": "/src/services/graph-style.service.md",
+      "relation": "depends_on"
+    },
+    {
+      "source": "/components/graph-inspector/graph-inspector.ts",
+      "target": "/src/components/common/common.module.md",
+      "relation": "depends_on"
+    },
+    {
+      "source": "/components/graph-inspector/graph-inspector.ts",
+      "target": "/src/platform-browser/dom-sanitizer.ts",
+      "relation": "depends_on"
+    },
+    {
+      "source": "/components/graph-inspector/graph-inspector.ts",
+      "target": "/src/services/graph-state.service.md",
+      "relation": "depends_on"
+    },
+    {
+      "source": "/components/graph-inspector/graph-inspector.ts",
+      "target": "/src/services/graph-hierarchy.service.md",
+      "relation": "depends_on"
+    },
+    {
+      "source": "/components/graph-inspector/graph-inspector.ts",
+      "target": "/src/services/graph-style.service.md",
+      "relation": "depends_on"
+    },
+    {
+      "source": "/components/graph-inspector/graph-inspector.ts",
+      "target": "/src/core/graph-normalize.ts",
+      "relation": "depends_on"
+    }
+  ],
+  "metadata": {
+    "environment_variables": [
+      "PANEL_WIDTH_KEY",
+      "COLLAPSED_SECTIONS_KEY",
+      "HIDDEN_RELATIONS_KEY",
+      "SHOW_EXTERNAL_KEY"
+    ],
+    "external_dependencies": [
+      "rxjs",
+      "marked"
+    ],
+    "has_side_effects": true
+  }
+}

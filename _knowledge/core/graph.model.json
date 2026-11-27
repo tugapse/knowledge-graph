@@ -1,0 +1,73 @@
+{
+  "component": {
+    "name": "graph.model",
+    "source_path": "/core/graph.model.ts",
+    "doc_path": "/core/graph.model.json",
+    "type": "interface"
+  },
+  "vector_memory": {
+    "semantic_summary": "This component defines the core data models for representing graph structures within the application. It establishes interfaces like GraphNode, GraphLink, and GraphData to blueprint nodes, edges, and the overall graph container. It also provides GraphConfig, which dictates rendering parameters, physics simulation settings, and color mapping rules for visualization libraries."
+  },
+  "graph_nodes": [
+    {
+      "id": "/core/graph.model.ts#ColorHexRgb",
+      "label": "Interface",
+      "name": "ColorHexRgb",
+      "signature": "interface ColorHexRgb { hex: string; rgb: string; }"
+    },
+    {
+      "id": "/core/graph.model.ts#ColorRgb",
+      "label": "Interface",
+      "name": "ColorRgb",
+      "signature": "interface ColorRgb { r: number; g: number; b: number; }"
+    },
+    {
+      "id": "/core/graph.model.ts#NodeColorMap",
+      "label": "Interface",
+      "name": "NodeColorMap",
+      "signature": "interface NodeColorMap { module: ColorRgb; class: ColorRgb; function: ColorRgb; service: ColorRgb; interface: ColorRgb; default: ColorRgb; [key: string]: ColorRgb; }"
+    },
+    {
+      "id": "/core/graph.model.ts#LinkColorMap",
+      "label": "Interface",
+      "name": "LinkColorMap",
+      "signature": "interface LinkColorMap { imports: ColorRgb; calls: ColorRgb; inherits: ColorRgb; default: ColorRgb; [key: string]: ColorRgb; }"
+    },
+    {
+      "id": "/core/graph.model.ts#GraphNode",
+      "label": "Interface",
+      "name": "GraphNode",
+      "signature": "interface GraphNode { id: string; name?: string; group?: string; subsystem?: string; connectionCount?: number; _levels?: string[]; _tempLevels?: string[]; x?: number; y?: number; z?: number; vx?: number; vy?: number; vz?: number; fx?: number; fy?: number; fz?: number; index?: number; signature?: string; semantic_summary?: string; keywords?: string[]; human_overview?: string; side_effects?: string; raw_markdown?: string; environment_variables?: string[]; external_dependencies?: string[]; [key: string]: any; }"
+    },
+    {
+      "id": "/core/graph.model.ts#GraphLink",
+      "label": "Interface",
+      "name": "GraphLink",
+      "signature": "interface GraphLink { source: string | GraphNode | any; target: string | GraphNode | any; index?: number; relation?: string; inferred?: boolean; [key: string]: any; }"
+    },
+    {
+      "id": "/core/graph.model.ts#GraphData",
+      "label": "Interface",
+      "name": "GraphData",
+      "signature": "interface GraphData { nodes: GraphNode[]; links: GraphLink[]; }"
+    },
+    {
+      "id": "/core/graph.model.ts#ClusterGroup",
+      "label": "Type",
+      "name": "ClusterGroup",
+      "signature": "export type ClusterGroup = GraphNode[] & { level?: number; shortName?: string; parentKey?: string | null; targetCenter?: { x: number; y: number; z: number }; };"
+    },
+    {
+      "id": "/core/graph.model.ts#GraphConfig",
+      "label": "Interface",
+      "name": "GraphConfig",
+      "signature": "interface GraphConfig { dag: { enabled: boolean; mode: string; distance: number; }; colors: { levels: Record<number, ColorHexRgb>; nodes: NodeColorMap; links: LinkColorMap; opacities: { nodes: { focused: number; directNeighbor: number; sameCluster: number; sameRoot: number; unrelated: number; }; links: { focused: number; internalCluster: number; siblingCluster: number; unrelated: number; }; }; }; physics: { orbits: { base: Record<number, number>; scale: Record<number, number>; }; clusterGravity: { alpha: number; stopRadiusBase: number; stopRadiusScale: number; }; links: { distance: { internal: number; l2Sibling: number; l1Sibling: number; external: number; }; strength: { internal: number; l1Sibling: number; external: number; }; }; charge: number; }; camera: { badgeYOffset: Record<number, number>; baseDistance: Record<number, number>; distanceScale: number; }; labels: { clusterMaxPills: number; globalMaxPills: number; }; }"
+    }
+  ],
+  "graph_edges": [],
+  "metadata": {
+    "environment_variables": [],
+    "external_dependencies": [],
+    "has_side_effects": false
+  }
+}

@@ -1,0 +1,157 @@
+{
+  "component": {
+    "name": "GraphSearchComponent",
+    "source_path": "/components/graph-search/graph-search.ts",
+    "doc_path": "/components/graph-search/graph-search.json",
+    "type": "class"
+  },
+  "vector_memory": {
+    "semantic_summary": "GraphSearchComponent provides an interactive UI for searching nodes within a graph dataset. It consumes graph state from GraphStateService and GraphHierarchyService to filter nodes based on user input. The core logic involves scoring nodes based on name, ID, and properties, and managing UI interactions like keyboard navigation and result display. It mutates external state by calling selection and search result setters on the state service."
+  },
+  "graph_nodes": [
+    {
+      "id": "/components/graph-search/graph-search.ts#GraphSearchComponent",
+      "label": "Class",
+      "name": "GraphSearchComponent",
+      "signature": "class GraphSearchComponent implements OnInit, OnDestroy"
+    },
+    {
+      "id": "/components/graph-search/graph-search.ts#TextPart",
+      "label": "Interface",
+      "name": "TextPart",
+      "signature": "interface TextPart { text: string; hit: boolean }"
+    },
+    {
+      "id": "/components/graph-search/graph-search.ts#SearchResult",
+      "label": "Interface",
+      "name": "SearchResult",
+      "signature": "export interface SearchResult { node: GraphNode; score: number; nameParts: TextPart[]; matchedOn: 'keyword' | 'summary' | 'type' | 'cluster' | null; color: string; cluster: string; }"
+    },
+    {
+      "id": "/components/graph-search/graph-search.ts#highlight",
+      "label": "Function",
+      "name": "highlight",
+      "signature": "export function highlight(text: string, q: string): TextPart[]"
+    },
+    {
+      "id": "/components/graph-search/graph-search.ts#ngOnInit",
+      "label": "Method",
+      "name": "ngOnInit",
+      "signature": "ngOnInit(): void"
+    },
+    {
+      "id": "/components/graph-search/graph-search.ts#ngOnDestroy",
+      "label": "Method",
+      "name": "ngOnDestroy",
+      "signature": "ngOnDestroy(): void"
+    },
+    {
+      "id": "/components/graph-search/graph-search.ts#handleGlobalKeys",
+      "label": "Method",
+      "name": "handleGlobalKeys",
+      "signature": "@HostListener('window:keydown', ['$event']) handleGlobalKeys(e: KeyboardEvent): void"
+    },
+    {
+      "id": "/components/graph-search/graph-search.ts#onDocumentMouseDown",
+      "label": "Method",
+      "name": "onDocumentMouseDown",
+      "signature": "@HostListener('document:mousedown', ['$event']) onDocumentMouseDown(e: MouseEvent): void"
+    },
+    {
+      "id": "/components/graph-search/graph-search.ts#onInputKeydown",
+      "label": "Method",
+      "name": "onInputKeydown",
+      "signature": "onInputKeydown(e: KeyboardEvent): void"
+    },
+    {
+      "id": "/components/graph-search/graph-search.ts#onInput",
+      "label": "Method",
+      "name": "onInput",
+      "signature": "onInput(e: Event): void"
+    },
+    {
+      "id": "/components/graph-search/graph-search.ts#onFocus",
+      "label": "Method",
+      "name": "onFocus",
+      "signature": "onFocus(): void"
+    },
+    {
+      "id": "/components/graph-search/graph-search.ts#onBlur",
+      "label": "Method",
+      "name": "onBlur",
+      "signature": "onBlur(): void"
+    },
+    {
+      "id": "/components/graph-search/graph-search.ts#clear",
+      "label": "Method",
+      "name": "clear",
+      "signature": "clear(): void"
+    },
+    {
+      "id": "/components/graph-search/graph-search.ts#select",
+      "label": "Method",
+      "name": "select",
+      "signature": "select(node: GraphNode): void"
+    },
+    {
+      "id": "/components/graph-search/graph-search.ts#setActive",
+      "label": "Method",
+      "name": "setActive",
+      "signature": "setActive(i: number): void"
+    },
+    {
+      "id": "/components/graph-search/graph-search.ts#trackResult",
+      "label": "Method",
+      "name": "trackResult",
+      "signature": "trackResult(_: number, r: SearchResult): string"
+    },
+    {
+      "id": "/components/graph-search/graph-search.ts#close",
+      "label": "Method",
+      "name": "close",
+      "signature": "private close(): void"
+    },
+    {
+      "id": "/components/graph-search/graph-search.ts#runSearch",
+      "label": "Method",
+      "name": "runSearch",
+      "signature": "private runSearch(): void"
+    },
+    {
+      "id": "/components/graph-search/graph-search.ts#score",
+      "label": "Method",
+      "name": "score",
+      "signature": "private score(node: GraphNode, q: string): SearchResult | null"
+    },
+    {
+      "id": "/components/graph-search/graph-search.ts#scrollActiveIntoView",
+      "label": "Method",
+      "name": "scrollActiveIntoView",
+      "signature": "private scrollActiveIntoView(): void"
+    }
+  ],
+  "graph_edges": [
+    {
+      "source": "/components/graph-search/graph-search.ts",
+      "target": "/src/services/graph-state.service.md",
+      "relation": "depends_on"
+    },
+    {
+      "source": "/components/graph-search/graph-search.ts",
+      "target": "/src/services/graph-hierarchy.service.md",
+      "relation": "depends_on"
+    },
+    {
+      "source": "/components/graph-search/graph-search.ts",
+      "target": "/src/core/graph.model.md",
+      "relation": "depends_on"
+    }
+  ],
+  "metadata": {
+    "environment_variables": [],
+    "external_dependencies": [
+      "rxjs"
+    ],
+    "has_side_effects": true
+  }
+}

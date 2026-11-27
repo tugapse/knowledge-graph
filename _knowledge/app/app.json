@@ -1,0 +1,190 @@
+{
+  "component": {
+    "name": "AppComponent",
+    "source_path": "/app/app.ts",
+    "doc_path": "/app/app.json",
+    "type": "controller"
+  },
+  "vector_memory": {
+    "semantic_summary": "AppComponent serves as the root controller for the graph visualization application, managing the entire lifecycle from data ingestion to display. It orchestrates data fetching from local or API sources, normalizes the payload, and utilizes GraphHierarchyService to build cluster groups. It integrates GraphViewportComponent for rendering and GraphInspectorComponent for user interaction, synchronizing state via GraphStateService."
+  },
+  "graph_nodes": [
+    {
+      "id": "/app/app.ts#AppComponent",
+      "label": "Class",
+      "name": "AppComponent",
+      "signature": "class AppComponent implements OnInit"
+    },
+    {
+      "id": "/app/app.ts#ngOnInit",
+      "label": "Method",
+      "name": "ngOnInit",
+      "signature": "ngOnInit(): void"
+    },
+    {
+      "id": "/app/app.ts#onResetCamera",
+      "label": "Method",
+      "name": "onResetCamera",
+      "signature": "onResetCamera(): void"
+    },
+    {
+      "id": "/app/app.ts#loadGraphData",
+      "label": "Method",
+      "name": "loadGraphData",
+      "signature": "private loadGraphData(): void"
+    },
+    {
+      "id": "/app/app.ts#initGraphPayload",
+      "label": "Method",
+      "name": "initGraphPayload",
+      "signature": "private initGraphPayload(data: GraphData): void"
+    },
+    {
+      "id": "/app/app.ts#stats$",
+      "label": "Variable",
+      "name": "stats$",
+      "signature": "stats$: Observable<{ nodes: number; links: number }>"
+    }
+  ],
+  "graph_edges": [
+    {
+      "source": "/app/app.ts",
+      "target": "/app/app.ts#AppComponent",
+      "relation": "implements"
+    },
+    {
+      "source": "/app/app.ts",
+      "target": "/app/app.ts#ngOnInit",
+      "relation": "calls"
+    },
+    {
+      "source": "/app/app.ts",
+      "target": "/app/app.ts#loadGraphData",
+      "relation": "calls"
+    },
+    {
+      "source": "/app/app.ts",
+      "target": "/app/app.ts#initGraphPayload",
+      "relation": "calls"
+    },
+    {
+      "source": "/app/app.ts",
+      "target": "/app/app.ts#onResetCamera",
+      "relation": "calls"
+    },
+    {
+      "source": "/app/app.ts",
+      "target": "/app/app.ts#stats$",
+      "relation": "defines"
+    },
+    {
+      "source": "/app/app.ts",
+      "target": "/app/app.ts#constructor",
+      "relation": "calls"
+    },
+    {
+      "source": "/app/app.ts",
+      "target": "/app/app.ts#loadGraphData",
+      "relation": "calls"
+    },
+    {
+      "source": "/app/app.ts",
+      "target": "/app/app.ts#initGraphPayload",
+      "relation": "calls"
+    },
+    {
+      "source": "/app/app.ts",
+      "target": "/app/app.ts#state.setClusterGroups",
+      "relation": "calls"
+    },
+    {
+      "source": "/app/app.ts",
+      "target": "/app/app.ts#state.setGraphData",
+      "relation": "calls"
+    },
+    {
+      "source": "/app/app.ts",
+      "target": "/app/app.ts#hierarchy.buildClusterGroups",
+      "relation": "calls"
+    },
+    {
+      "source": "/app/app.ts",
+      "target": "/app/app.ts#countConnections",
+      "relation": "calls"
+    },
+    {
+      "source": "/app/app.ts",
+      "target": "/app/app.ts#normalizeGraphData",
+      "relation": "calls"
+    },
+    {
+      "source": "/app/app.ts",
+      "target": "/app/app.ts#http.get",
+      "relation": "calls"
+    },
+    {
+      "source": "/app/app.ts",
+      "target": "/app/app.ts#state.triggerCameraMove",
+      "relation": "calls"
+    },
+    {
+      "source": "/app/app.ts",
+      "target": "/app/app.ts#CommonModule",
+      "relation": "imports"
+    },
+    {
+      "source": "/app/app.ts",
+      "target": "/app/app.ts#HttpClient",
+      "relation": "imports"
+    },
+    {
+      "source": "/app/app.ts",
+      "target": "/app/app.ts#Observable",
+      "relation": "imports"
+    },
+    {
+      "source": "/app/app.ts",
+      "target": "/app/app.ts#GraphData",
+      "relation": "imports"
+    },
+    {
+      "source": "/app/app.ts",
+      "target": "/app/app.ts#GraphViewportComponent",
+      "relation": "imports"
+    },
+    {
+      "source": "/app/app.ts",
+      "target": "/app/app.ts#GraphInspectorComponent",
+      "relation": "imports"
+    },
+    {
+      "source": "/app/app.ts",
+      "target": "/app/app.ts#GraphHierarchyService",
+      "relation": "imports"
+    },
+    {
+      "source": "/app/app.ts",
+      "target": "/app/app.ts#GraphStateService",
+      "relation": "imports"
+    },
+    {
+      "source": "/app/app.ts",
+      "target": "/app/app.ts#countConnections",
+      "relation": "imports"
+    },
+    {
+      "source": "/app/app.ts",
+      "target": "/app/app.ts#normalizeGraphData",
+      "relation": "imports"
+    }
+  ],
+  "metadata": {
+    "environment_variables": [],
+    "external_dependencies": [
+      "@angular/core",
+      "@angular/common/http",
+      "rxjs"
+    ],
+    "has_side_effects": true
+  }
+}

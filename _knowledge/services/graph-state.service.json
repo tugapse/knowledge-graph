@@ -1,0 +1,111 @@
+{
+  "component": {
+    "name": "GraphStateService",
+    "source_path": "/services/graph-state.service.ts",
+    "doc_path": "/services/graph-state.service.json",
+    "type": "service"
+  },
+  "vector_memory": {
+    "semantic_summary": "GraphStateService is the central state management service for graph visualization, acting as the single source of truth for graph configuration. It manages observable streams for graph structure, cluster groupings, and selection states. It provides reactive interfaces allowing UI components to automatically update when data is modified via methods like setGraphData or selectNode. The service handles complex state transitions, including calculating highlights and triggering camera movements based on user interactions."
+  },
+  "graph_nodes": [
+    {
+      "id": "/services/graph-state.service.ts#NeighborRelation",
+      "label": "Interface",
+      "name": "NeighborRelation",
+      "signature": "id: string; name: string; relation: string; dir: 'OUT' | 'IN' | 'SELF'; group?: string; inferred?: boolean;"
+    },
+    {
+      "id": "/services/graph-state.service.ts#GraphStateService",
+      "label": "Class",
+      "name": "GraphStateService",
+      "signature": "Injectable()"
+    },
+    {
+      "id": "/services/graph-state.service.ts#graphData",
+      "label": "Getter",
+      "name": "graphData",
+      "signature": "get graphData(): GraphData | null"
+    },
+    {
+      "id": "/services/graph-state.service.ts#clusterGroups",
+      "label": "Getter",
+      "name": "clusterGroups",
+      "signature": "get clusterGroups(): Record<string, ClusterGroup>"
+    },
+    {
+      "id": "/services/graph-state.service.ts#setGraphData",
+      "label": "Method",
+      "name": "setGraphData",
+      "signature": "setGraphData(data: GraphData): void"
+    },
+    {
+      "id": "/services/graph-state.service.ts#setClusterGroups",
+      "label": "Method",
+      "name": "setClusterGroups",
+      "signature": "setClusterGroups(groups: Record<string, ClusterGroup>): void"
+    },
+    {
+      "id": "/services/graph-state.service.ts#setSelectionIntensity",
+      "label": "Method",
+      "name": "setSelectionIntensity",
+      "signature": "setSelectionIntensity(val: number): void"
+    },
+    {
+      "id": "/services/graph-state.service.ts#setSearchMatchingNodes",
+      "label": "Method",
+      "name": "setSearchMatchingNodes",
+      "signature": "setSearchMatchingNodes(nodes: Set<string>): void"
+    },
+    {
+      "id": "/services/graph-state.service.ts#triggerCameraMove",
+      "label": "Method",
+      "name": "triggerCameraMove",
+      "signature": "triggerCameraMove(pos: { x: number; y: number; z: number }, lookAt: { x: number; y: number; z: number }, duration = 1200, avoidPanel = false): void"
+    },
+    {
+      "id": "/services/graph-state.service.ts#selectNode",
+      "label": "Method",
+      "name": "selectNode",
+      "signature": "selectNode(node: GraphNode | null): void"
+    },
+    {
+      "id": "/services/graph-state.service.ts#selectCluster",
+      "label": "Method",
+      "name": "selectCluster",
+      "signature": "selectCluster(clusterName: string, badgeYOffset: Record<number, number>, baseDistance: Record<number, number>, distanceScale: number): void"
+    },
+    {
+      "id": "/services/graph-state.service.ts#setSearchResults",
+      "label": "Method",
+      "name": "setSearchResults",
+      "signature": "setSearchResults(matches: GraphNode[]): void"
+    },
+    {
+      "id": "/services/graph-state.service.ts#clearSelection",
+      "label": "Method",
+      "name": "clearSelection",
+      "signature": "clearSelection(): void"
+    },
+    {
+      "id": "/services/graph-state.service.ts#goBack",
+      "label": "Method",
+      "name": "goBack",
+      "signature": "goBack(): void"
+    }
+  ],
+  "graph_edges": [
+    {
+      "source": "/services/graph-state.service.ts",
+      "target": "/../core/graph.model.md",
+      "relation": "imports"
+    }
+  ],
+  "metadata": {
+    "environment_variables": [],
+    "external_dependencies": [
+      "rxjs"
+    ],
+    "has_side_effects": true
+  }
+}

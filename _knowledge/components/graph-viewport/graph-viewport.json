@@ -1,0 +1,155 @@
+{
+  "component": {
+    "name": "GraphViewportComponent",
+    "source_path": "/components/graph-viewport/graph-viewport.ts",
+    "doc_path": "/components/graph-viewport/graph-viewport.json",
+    "type": "class"
+  },
+  "vector_memory": {
+    "semantic_summary": "GraphViewportComponent is the primary presentation layer for rendering an interactive 3D graph visualization using the 3d-force-graph library. It manages the complex physics simulation, translating abstract graph state (nodes, links, selection) into dynamic visual elements. It subscribes to state services to handle visual updates, including smooth fading transitions managed via requestAnimationFrame. It exposes methods to control the 3D camera view and convert world coordinates to screen coordinates."
+  },
+  "graph_nodes": [
+    {
+      "id": "/components/graph-viewport/graph-viewport.ts#GraphViewportComponent",
+      "label": "Class",
+      "name": "GraphViewportComponent",
+      "signature": ""
+    },
+    {
+      "id": "/components/graph-viewport/graph-viewport.ts#ngOnInit",
+      "label": "Method",
+      "name": "ngOnInit",
+      "signature": "ngOnInit(): void"
+    },
+    {
+      "id": "/components/graph-viewport/graph-viewport.ts#ngOnDestroy",
+      "label": "Method",
+      "name": "ngOnDestroy",
+      "signature": "ngOnDestroy(): void"
+    },
+    {
+      "id": "/components/graph-viewport/graph-viewport.ts#resetCamera",
+      "label": "Method",
+      "name": "resetCamera",
+      "signature": "resetCamera(): void"
+    },
+    {
+      "id": "/components/graph-viewport/graph-viewport.ts#getScreenCoords",
+      "label": "Method",
+      "name": "getScreenCoords",
+      "signature": "getScreenCoords(x: number, y: number, z: number): { x: number; y: number } | null"
+    },
+    {
+      "id": "/components/graph-viewport/graph-viewport.ts#initGraphInstance",
+      "label": "Method",
+      "name": "initGraphInstance",
+      "signature": "initGraphInstance(): void"
+    },
+    {
+      "id": "/components/graph-viewport/graph-viewport.ts#bindStateStreams",
+      "label": "Method",
+      "name": "bindStateStreams",
+      "signature": "bindStateStreams(): void"
+    },
+    {
+      "id": "/components/graph-viewport/graph-viewport.ts#offsetForInspector",
+      "label": "Method",
+      "name": "offsetForInspector",
+      "signature": "offsetForInspector(pos: Vec3, lookAt: Vec3): { pos: Vec3; lookAt: Vec3 }"
+    },
+    {
+      "id": "/components/graph-viewport/graph-viewport.ts#layoutKey",
+      "label": "Method",
+      "name": "layoutKey",
+      "signature": "layoutKey(style: GraphStyleConfig): string"
+    },
+    {
+      "id": "/components/graph-viewport/graph-viewport.ts#scheduleLayoutRebuild",
+      "label": "Method",
+      "name": "scheduleLayoutRebuild",
+      "signature": "scheduleLayoutRebuild(): void"
+    },
+    {
+      "id": "/components/graph-viewport/graph-viewport.ts#refreshVisualState",
+      "label": "Method",
+      "name": "refreshVisualState",
+      "signature": "refreshVisualState(): void"
+    },
+    {
+      "id": "/components/graph-viewport/graph-viewport.ts#retargetFades",
+      "label": "Method",
+      "name": "retargetFades",
+      "signature": "retargetFades(): void"
+    },
+    {
+      "id": "/components/graph-viewport/graph-viewport.ts#fadeStep",
+      "label": "Method",
+      "name": "fadeStep",
+      "signature": "fadeStep(): void"
+    },
+    {
+      "id": "/components/graph-viewport/graph-viewport.ts#calculateNodeColor",
+      "label": "Method",
+      "name": "calculateNodeColor",
+      "signature": "calculateNodeColor(node: GraphNode): Rgba"
+    },
+    {
+      "id": "/components/graph-viewport/graph-viewport.ts#calculateLinkColor",
+      "label": "Method",
+      "name": "calculateLinkColor",
+      "signature": "calculateLinkColor(link: GraphLink): Rgba"
+    },
+    {
+      "id": "/components/graph-viewport/graph-viewport.ts#calculateLinkWidth",
+      "label": "Method",
+      "name": "calculateLinkWidth",
+      "signature": "calculateLinkWidth(link: GraphLink): number"
+    },
+    {
+      "id": "/components/graph-viewport/graph-viewport.ts#applyPhysicsSettings",
+      "label": "Method",
+      "name": "applyPhysicsSettings",
+      "signature": "applyPhysicsSettings(): void"
+    }
+  ],
+  "graph_edges": [
+    {
+      "source": "/components/graph-viewport/graph-viewport.ts",
+      "target": "/src/services/graph-state.service.md",
+      "relation": "depends_on"
+    },
+    {
+      "source": "/components/graph-viewport/graph-viewport.ts",
+      "target": "/src/services/graph-style.service.md",
+      "relation": "depends_on"
+    },
+    {
+      "source": "/components/graph-viewport/graph-viewport.ts",
+      "target": "/src/services/graph-hierarchy.service.md",
+      "relation": "depends_on"
+    },
+    {
+      "source": "/components/graph-viewport/graph-viewport.ts",
+      "target": "/components/graph-hud/graph-hud.md",
+      "relation": "imports"
+    },
+    {
+      "source": "/components/graph-viewport/graph-viewport.ts",
+      "target": "/components/graph-style-panel/graph-style-panel.md",
+      "relation": "imports"
+    },
+    {
+      "source": "/components/graph-viewport/graph-viewport.ts",
+      "target": "/src/core/graph.model.md",
+      "relation": "imports"
+    }
+  ],
+  "metadata": {
+    "environment_variables": [],
+    "external_dependencies": [
+      "3d-force-graph",
+      "rxjs"
+    ],
+    "has_side_effects": true
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "component": {
+    "name": "graph.config.ts",
+    "source_path": "/core/graph.config.ts",
+    "doc_path": "/core/graph.config.json",
+    "type": "module"
+  },
+  "vector_memory": {
+    "semantic_summary": "This module defines the comprehensive, static configuration object, DEFAULT_GRAPH_CONFIG, which serves as the foundational blueprint for graph rendering and simulation. It centralizes parameters covering DAG visualization modes, detailed color mappings for nodes and links across various levels, and physics simulation constants like charge and link distances. The component is purely declarative, providing consistent defaults for visual and structural attributes consumed by rendering services."
+  },
+  "graph_nodes": [
+    {
+      "id": "/core/graph.config.ts#DEFAULT_GRAPH_CONFIG",
+      "label": "Variable",
+      "name": "DEFAULT_GRAPH_CONFIG",
+      "signature": "GraphConfig"
+    }
+  ],
+  "graph_edges": [
+    {
+      "source": "/core/graph.config.ts",
+      "target": "/src/core/graph.model.md",
+      "relation": "imports"
+    }
+  ],
+  "metadata": {
+    "environment_variables": [],
+    "external_dependencies": [],
+    "has_side_effects": false
+  }
+}

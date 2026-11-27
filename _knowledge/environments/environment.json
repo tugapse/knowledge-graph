@@ -1,0 +1,25 @@
+{
+  "component": {
+    "name": "environment",
+    "source_path": "/environments/environment.ts",
+    "doc_path": "/environments/environment.json",
+    "type": "module"
+  },
+  "vector_memory": {
+    "semantic_summary": "This module defines the global configuration object 'environment', which serves as the application's central settings repository. Its primary function is to hold immutable, application-wide flags, most notably the 'production' status. It acts as a foundational configuration layer, allowing other services to adapt their behavior based on the operational mode defined here."
+  },
+  "graph_nodes": [
+    {
+      "id": "/environments/environment.ts#environment",
+      "label": "Variable",
+      "name": "environment",
+      "signature": "const environment = { production: false }"
+    }
+  ],
+  "graph_edges": [],
+  "metadata": {
+    "environment_variables": [],
+    "external_dependencies": [],
+    "has_side_effects": false
+  }
+}

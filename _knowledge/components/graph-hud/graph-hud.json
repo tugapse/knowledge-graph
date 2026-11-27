@@ -1,0 +1,137 @@
+{
+  "component": {
+    "name": "GraphHudComponent",
+    "source_path": "/components/graph-hud/graph-hud.ts",
+    "doc_path": "/components/graph-hud/graph-hud.json",
+    "type": "class"
+  },
+  "vector_memory": {
+    "semantic_summary": "GraphHudComponent is a presentation layer component responsible for rendering dynamic Heads-Up Display (HUD) elements, such as badges for clusters and pills for nodes, overlaid on a knowledge graph visualization. It manages display state, handles user interactions like searching and focusing, and runs a continuous rendering loop using requestAnimationFrame. It consumes state from GraphStateService and relies on GraphViewportComponent for 3D-to-2D coordinate projections, integrating styling via GraphStyleService."
+  },
+  "graph_nodes": [
+    {
+      "id": "/components/graph-hud/graph-hud.ts#GraphHudComponent",
+      "label": "Class",
+      "name": "GraphHudComponent",
+      "signature": ""
+    },
+    {
+      "id": "/components/graph-hud/graph-hud.ts#displayTitle",
+      "label": "Getter",
+      "name": "displayTitle",
+      "signature": ""
+    },
+    {
+      "id": "/components/graph-hud/graph-hud.ts#switchTab",
+      "label": "Method",
+      "name": "switchTab",
+      "signature": "switchTab(tabId: string): void"
+    },
+    {
+      "id": "/components/graph-hud/graph-hud.ts#toggleInspectorPanel",
+      "label": "Method",
+      "name": "toggleInspectorPanel",
+      "signature": "toggleInspectorPanel(): void"
+    },
+    {
+      "id": "/components/graph-hud/graph-hud.ts#onSearchInput",
+      "label": "Method",
+      "name": "onSearchInput",
+      "signature": "onSearchInput(event: Event): void"
+    },
+    {
+      "id": "/components/graph-hud/graph-hud.ts#resetCamera",
+      "label": "Method",
+      "name": "resetCamera",
+      "signature": "resetCamera(): void"
+    },
+    {
+      "id": "/components/graph-hud/graph-hud.ts#goBackInspectorSelection",
+      "label": "Method",
+      "name": "goBackInspectorSelection",
+      "signature": "goBackInspectorSelection(): void"
+    },
+    {
+      "id": "/components/graph-hud/graph-hud.ts#onClusterClick",
+      "label": "Method",
+      "name": "onClusterClick",
+      "signature": "onClusterClick(clusterName: string, event: MouseEvent): void"
+    },
+    {
+      "id": "/components/graph-hud/graph-hud.ts#onNodeClick",
+      "label": "Method",
+      "name": "onNodeClick",
+      "signature": "onNodeClick(nodeId: string, event: MouseEvent): void"
+    },
+    {
+      "id": "/components/graph-hud/graph-hud.ts#ngOnInit",
+      "label": "Method",
+      "name": "ngOnInit",
+      "signature": ""
+    },
+    {
+      "id": "/components/graph-hud/graph-hud.ts#ngOnDestroy",
+      "label": "Method",
+      "name": "ngOnDestroy",
+      "signature": ""
+    },
+    {
+      "id": "/components/graph-hud/graph-hud.ts#trackById",
+      "label": "Method",
+      "name": "trackById",
+      "signature": "trackById(_: number, item: { id: string }): string"
+    },
+    {
+      "id": "/components/graph-hud/graph-hud.ts#startProjectionLoop",
+      "label": "Method",
+      "name": "startProjectionLoop",
+      "signature": ""
+    },
+    {
+      "id": "/components/graph-hud/graph-hud.ts#updateProjections",
+      "label": "Method",
+      "name": "updateProjections",
+      "signature": ""
+    }
+  ],
+  "graph_edges": [
+    {
+      "source": "/components/graph-hud/graph-hud.ts",
+      "target": "/src/components/graph-hud/graph-hud.ts",
+      "relation": "imports"
+    },
+    {
+      "source": "/components/graph-hud/graph-hud.ts",
+      "target": "/src/components/graph-hud/graph-hud.ts",
+      "relation": "imports"
+    },
+    {
+      "source": "/components/graph-hud/graph-hud.ts",
+      "target": "/src/components/graph-hud/graph-hud.ts",
+      "relation": "imports"
+    },
+    {
+      "source": "/components/graph-hud/graph-hud.ts",
+      "target": "/src/components/graph-hud/graph-hud.ts",
+      "relation": "imports"
+    },
+    {
+      "source": "/components/graph-hud/graph-hud.ts",
+      "target": "/src/components/graph-hud/graph-hud.ts",
+      "relation": "imports"
+    },
+    {
+      "source": "/components/graph-hud/graph-hud.ts",
+      "target": "/src/components/graph-hud/graph-hud.ts",
+      "relation": "imports"
+    }
+  ],
+  "metadata": {
+    "environment_variables": [],
+    "external_dependencies": [
+      "rxjs",
+      "@angular/core"
+    ],
+    "has_side_effects": true
+  }
+}

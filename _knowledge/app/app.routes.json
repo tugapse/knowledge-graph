@@ -1,0 +1,39 @@
+{
+  "component": {
+    "name": "app.routes.ts",
+    "source_path": "/app/app.routes.ts",
+    "doc_path": "/app/app.routes.json",
+    "type": "module"
+  },
+  "vector_memory": {
+    "semantic_summary": "This module defines the core routing structure for the Angular application by exporting a constant array named 'routes'. It serves as the central configuration point that the Angular router service consumes to map incoming URLs to specific application components. The implementation is purely declarative, containing no complex logic or side effects, focusing solely on defining the navigation map."
+  },
+  "graph_nodes": [
+    {
+      "id": "/app/app.routes.ts#Routes",
+      "label": "Type",
+      "name": "Routes",
+      "signature": "Type"
+    },
+    {
+      "id": "/app/app.routes.ts#routes",
+      "label": "Variable",
+      "name": "routes",
+      "signature": "const routes: Routes = []"
+    }
+  ],
+  "graph_edges": [
+    {
+      "source": "/app/app.routes.ts",
+      "target": "/node_modules/@angular/router",
+      "relation": "imports"
+    }
+  ],
+  "metadata": {
+    "environment_variables": [],
+    "external_dependencies": [
+      "@angular/router"
+    ],
+    "has_side_effects": false
+  }
+}

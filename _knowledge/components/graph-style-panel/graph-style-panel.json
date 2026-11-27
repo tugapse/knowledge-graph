@@ -1,0 +1,125 @@
+{
+  "component": {
+    "name": "GraphStylePanelComponent",
+    "source_path": "/components/graph-style-panel/graph-style-panel.ts",
+    "doc_path": "/components/graph-style-panel/graph-style-panel.json",
+    "type": "class"
+  },
+  "vector_memory": {
+    "semantic_summary": "GraphStylePanelComponent is a UI controller responsible for managing and displaying configuration settings for a graph visualization. It handles user interaction for appearance and physics parameters, utilizing a draft configuration object derived from GraphStyleService. Key methods allow users to toggle visibility, navigate nested settings via path arrays, and commit changes live to the service and local storage."
+  },
+  "graph_nodes": [
+    {
+      "id": "/components/graph-style-panel/graph-style-panel.ts#GraphStylePanelComponent",
+      "label": "Class",
+      "name": "GraphStylePanelComponent",
+      "signature": ""
+    },
+    {
+      "id": "/components/graph-style-panel/graph-style-panel.ts#Path",
+      "label": "Type",
+      "name": "Path",
+      "signature": "(string | number)[]"
+    },
+    {
+      "id": "/components/graph-style-panel/graph-style-panel.ts#ColorItem",
+      "label": "Interface",
+      "name": "ColorItem",
+      "signature": ""
+    },
+    {
+      "id": "/components/graph-style-panel/graph-style-panel.ts#SliderItem",
+      "label": "Interface",
+      "name": "SliderItem",
+      "signature": ""
+    },
+    {
+      "id": "/components/graph-style-panel/graph-style-panel.ts#ToggleItem",
+      "label": "Interface",
+      "name": "ToggleItem",
+      "signature": ""
+    },
+    {
+      "id": "/components/graph-style-panel/graph-style-panel.ts#Section",
+      "label": "Interface",
+      "name": "Section",
+      "signature": ""
+    },
+    {
+      "id": "/components/graph-style-panel/graph-style-panel.ts#SectionGroup",
+      "label": "Interface",
+      "name": "SectionGroup",
+      "signature": ""
+    },
+    {
+      "id": "/components/graph-style-panel/graph-style-panel.ts#toggle",
+      "label": "Method",
+      "name": "toggle",
+      "signature": "toggle(): void"
+    },
+    {
+      "id": "/components/graph-style-panel/graph-style-panel.ts#toggleSection",
+      "label": "Method",
+      "name": "toggleSection",
+      "signature": "toggleSection(id: string): void"
+    },
+    {
+      "id": "/components/graph-style-panel/graph-style-panel.ts#get",
+      "label": "Method",
+      "name": "get",
+      "signature": "get(path: Path): any"
+    },
+    {
+      "id": "/components/graph-style-panel/graph-style-panel.ts#set",
+      "label": "Method",
+      "name": "set",
+      "signature": "set(path: Path, value: unknown): void"
+    },
+    {
+      "id": "/components/graph-style-panel/graph-style-panel.ts#commit",
+      "label": "Method",
+      "name": "commit",
+      "signature": "commit(): void"
+    },
+    {
+      "id": "/components/graph-style-panel/graph-style-panel.ts#resetAll",
+      "label": "Method",
+      "name": "resetAll",
+      "signature": "resetAll(): void"
+    },
+    {
+      "id": "/components/graph-style-panel/graph-style-panel.ts#resetSection",
+      "label": "Method",
+      "name": "resetSection",
+      "signature": "resetSection(section: Section): void"
+    },
+    {
+      "id": "/components/graph-style-panel/graph-style-panel.ts#fmt",
+      "label": "Method",
+      "name": "fmt",
+      "signature": "fmt(value: number, step: number): string"
+    },
+    {
+      "id": "/components/graph-style-panel/graph-style-panel.ts#trackSection",
+      "label": "Method",
+      "name": "trackSection",
+      "signature": "trackSection(_: number, s: Section): string"
+    }
+  ],
+  "graph_edges": [
+    {
+      "source": "/components/graph-style-panel/graph-style-panel.ts",
+      "target": "/src/services/graph-style.service.md",
+      "relation": "depends_on"
+    }
+  ],
+  "metadata": {
+    "environment_variables": [],
+    "external_dependencies": [
+      "@angular/core",
+      "@angular/common",
+      "@angular/forms"
+    ],
+    "has_side_effects": true
+  }
+}

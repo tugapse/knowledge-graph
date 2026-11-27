@@ -1,0 +1,62 @@
+{
+  "component": {
+    "name": "graph-normalize.spec.ts",
+    "source_path": "/core/graph-normalize.spec.ts",
+    "doc_path": "/core/graph-normalize.spec.json",
+    "type": "script"
+  },
+  "vector_memory": {
+    "semantic_summary": "This component is a unit test suite validating the graph normalization logic. It uses vitest to execute tests against functions like normalizeGraphData, countConnections, and createNodeResolver. The tests verify data integrity by simulating graph structures, checking for duplicate merging, and validating inferred dependencies from Markdown links. It ensures core graph processing utilities adhere to defined data model rules."
+  },
+  "graph_nodes": [
+    {
+      "id": "/core/graph-normalize.spec.ts#describe",
+      "label": "Function",
+      "name": "describe",
+      "signature": "describe(description: string, fn: () => void)"
+    },
+    {
+      "id": "/core/graph-normalize.spec.ts#it",
+      "label": "Function",
+      "name": "it",
+      "signature": "it(description: string, fn: () => void)"
+    },
+    {
+      "id": "/core/graph-normalize.spec.ts#expect",
+      "label": "Function",
+      "name": "expect",
+      "signature": "expect(value: any)"
+    },
+    {
+      "id": "/core/graph-normalize.spec.ts#docMd",
+      "label": "Function",
+      "name": "docMd",
+      "signature": "docMd(internal: string): string"
+    },
+    {
+      "id": "/core/graph-normalize.spec.ts#fixture",
+      "label": "Function",
+      "name": "fixture",
+      "signature": "fixture(): GraphData"
+    }
+  ],
+  "graph_edges": [
+    {
+      "source": "/core/graph-normalize.spec.ts",
+      "target": "/core/graph-normalize.ts",
+      "relation": "imports"
+    },
+    {
+      "source": "/core/graph-normalize.spec.ts",
+      "target": "/core/graph.model.ts",
+      "relation": "imports"
+    }
+  ],
+  "metadata": {
+    "environment_variables": [],
+    "external_dependencies": [
+      "vitest"
+    ],
+    "has_side_effects": false
+  }
+}

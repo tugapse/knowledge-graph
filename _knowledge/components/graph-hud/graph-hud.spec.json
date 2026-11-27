@@ -1,0 +1,63 @@
+{
+  "component": {
+    "name": "GraphHudComponent",
+    "source_path": "/components/graph-hud/graph-hud.spec.ts",
+    "doc_path": "/components/graph-hud/graph-hud.spec.json",
+    "type": "script"
+  },
+  "vector_memory": {
+    "semantic_summary": "This script serves as the unit test suite for the GraphHudComponent, verifying its basic structural integrity within an isolated testing environment. It utilizes Angular's TestBed to bootstrap the component, ensuring that the instance can be successfully created and accessed. The primary logic confirms the component's existence by asserting that the instance is truthy after setup. It is confined entirely to testing infrastructure and has no external side effects."
+  },
+  "graph_nodes": [
+    {
+      "id": "/components/graph-hud/graph-hud.spec.ts#GraphHudComponent",
+      "label": "Class",
+      "name": "GraphHudComponent",
+      "signature": ""
+    },
+    {
+      "id": "/components/graph-hud/graph-hud.spec.ts#describe",
+      "label": "Function",
+      "name": "describe",
+      "signature": "describe('GraphHudComponent', () => {})"
+    },
+    {
+      "id": "/components/graph-hud/graph-hud.spec.ts#beforeEach",
+      "label": "Function",
+      "name": "beforeEach",
+      "signature": "beforeEach(async () => {})"
+    },
+    {
+      "id": "/components/graph-hud/graph-hud.spec.ts#it",
+      "label": "Function",
+      "name": "it",
+      "signature": "it('should create', () => {})"
+    },
+    {
+      "id": "/components/graph-hud/graph-hud.spec.ts#component",
+      "label": "Variable",
+      "name": "component",
+      "signature": ""
+    },
+    {
+      "id": "/components/graph-hud/graph-hud.spec.ts#fixture",
+      "label": "Variable",
+      "name": "fixture",
+      "signature": ""
+    }
+  ],
+  "graph_edges": [
+    {
+      "source": "/components/graph-hud/graph-hud.spec.ts",
+      "target": "/components/graph-hud/graph-hud.ts",
+      "relation": "imports"
+    }
+  ],
+  "metadata": {
+    "environment_variables": [],
+    "external_dependencies": [
+      "@angular/core/testing"
+    ],
+    "has_side_effects": false
+  }
+}

@@ -125,9 +125,9 @@ export class GraphStylePanelComponent {
           id: 'labels',
           title: 'LABELS',
           sliders: [
-            slider(['labels', 'pillFontSize'], 'Node label size', 9, 22, 1),
-            slider(['labels', 'badgeFontSize'], 'Cluster label size (L1)', 10, 24, 1),
             slider(['labels', 'maxPills'], 'Max node labels', 0, 200, 5),
+            slider(['labels', 'pillFontSize'], 'Node label size', 9, 16, 1),
+            slider(['labels', 'badgeFontSize'], 'Cluster label size (L1)', 10, 24, 1),
             slider(['labels', 'activeScale'], 'Active level scale', 1, 2, 0.05),
             slider(['labels', 'activeOpacity'], 'Active level opacity', 0, 1, 0.01),
             slider(['labels', 'childOpacity'], 'Inner children opacity', 0, 1, 0.01),

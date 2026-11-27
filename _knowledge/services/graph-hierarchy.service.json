@@ -1,0 +1,72 @@
+{
+  "component": {
+    "name": "GraphHierarchyService",
+    "source_path": "/services/graph-hierarchy.service.ts",
+    "doc_path": "/services/graph-hierarchy.service.json",
+    "type": "service"
+  },
+  "vector_memory": {
+    "semantic_summary": "GraphHierarchyService is a core data processing service responsible for analyzing GraphNode objects to determine their structural relationships and hierarchical placement. It parses complex node identifiers to derive conceptual levels, transforming raw nodes into a structured Record<string, ClusterGroup>. It facilitates graph visualization by calculating cluster centers recursively based on the derived hierarchy and styling parameters."
+  },
+  "graph_nodes": [
+    {
+      "id": "/services/graph-hierarchy.service.ts#GraphHierarchyService",
+      "label": "Class",
+      "name": "GraphHierarchyService",
+      "signature": "constructor(private style: GraphStyleService)"
+    },
+    {
+      "id": "/services/graph-hierarchy.service.ts#parseNodeLevels",
+      "label": "Method",
+      "name": "parseNodeLevels",
+      "signature": "parseNodeLevels(node: GraphNode | null): string[]"
+    },
+    {
+      "id": "/services/graph-hierarchy.service.ts#buildClusterGroups",
+      "label": "Method",
+      "name": "buildClusterGroups",
+      "signature": "buildClusterGroups(nodes: GraphNode[]): Record<string, ClusterGroup>"
+    },
+    {
+      "id": "/services/graph-hierarchy.service.ts#calculateClusterCenters",
+      "label": "Method",
+      "name": "calculateClusterCenters",
+      "signature": "calculateClusterCenters(clusterGroups: Record<string, ClusterGroup>, hierarchyObj: Record<string, any>, parentCenter: { x: number, y: number, z: number }, currentLevel: number, currentPath: string, parentAngle: number): void"
+    },
+    {
+      "id": "/services/graph-hierarchy.service.ts#getNodeBaseColor",
+      "label": "Method",
+      "name": "getNodeBaseColor",
+      "signature": "getNodeBaseColor(node: GraphNode): ColorRgb"
+    },
+    {
+      "id": "/services/graph-hierarchy.service.ts#getLinkBaseColor",
+      "label": "Method",
+      "name": "getLinkBaseColor",
+      "signature": "getLinkBaseColor(link: GraphLink): ColorRgb"
+    },
+    {
+      "id": "/services/graph-hierarchy.service.ts#getLevelColor",
+      "label": "Method",
+      "name": "getLevelColor",
+      "signature": "getLevelColor(node: GraphNode): ColorHexRgb"
+    }
+  ],
+  "graph_edges": [
+    {
+      "source": "/services/graph-hierarchy.service.ts",
+      "target": "/src/core/graph.model.ts",
+      "relation": "imports"
+    },
+    {
+      "source": "/services/graph-hierarchy.service.ts",
+      "target": "/src/services/graph-style.service.ts",
+      "relation": "imports"
+    }
+  ],
+  "metadata": {
+    "environment_variables": [],
+    "external_dependencies": [],
+    "has_side_effects": true
+  }
+}

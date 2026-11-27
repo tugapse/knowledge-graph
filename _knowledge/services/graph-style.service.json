@@ -1,0 +1,134 @@
+{
+  "component": {
+    "name": "GraphStyleService",
+    "source_path": "/services/graph-style.service.ts",
+    "doc_path": "/services/graph-style.service.json",
+    "type": "service"
+  },
+  "vector_memory": {
+    "semantic_summary": "GraphStyleService manages and persists all user-tunable styling configurations for graph visualization, acting as a centralized state manager. It loads initial settings from localStorage, merging them with hardcoded defaults defined in graph.config.ts. The service exposes the current configuration via an RxJS Observable, allowing other components to reactively consume visual style data like node colors and link aesthetics. It handles color resolution from hex to RGB internally for rendering efficiency."
+  },
+  "graph_nodes": [
+    {
+      "id": "/services/graph-style.service.ts#GraphStyleConfig",
+      "label": "Interface",
+      "name": "GraphStyleConfig",
+      "signature": "interface GraphStyleConfig"
+    },
+    {
+      "id": "/services/graph-style.service.ts#NodeTypeKey",
+      "label": "Type",
+      "name": "NodeTypeKey",
+      "signature": "export type NodeTypeKey = 'module' | 'class' | 'function' | 'service' | 'interface' | 'default';"
+    },
+    {
+      "id": "/services/graph-style.service.ts#LinkTypeKey",
+      "label": "Type",
+      "name": "LinkTypeKey",
+      "signature": "export type LinkTypeKey = 'imports' | 'calls' | 'inherits' | 'uses' | 'default';"
+    },
+    {
+      "id": "/services/graph-style.service.ts#GraphStyleService",
+      "label": "Class",
+      "name": "GraphStyleService",
+      "signature": "class GraphStyleService"
+    },
+    {
+      "id": "/services/graph-style.service.ts#GraphStyleService.defaults",
+      "label": "Property",
+      "name": "defaults",
+      "signature": "readonly defaults = buildDefaults();"
+    },
+    {
+      "id": "/services/graph-style.service.ts#GraphStyleService.style$",
+      "label": "Property",
+      "name": "style$",
+      "signature": "readonly style$: Observable<GraphStyleConfig> = this.styleSub.asObservable();"
+    },
+    {
+      "id": "/services/graph-style.service.ts#GraphStyleService.style",
+      "label": "Property",
+      "name": "style",
+      "signature": "get style(): GraphStyleConfig { return this.styleSub.value; }"
+    },
+    {
+      "id": "/services/graph-style.service.ts#GraphStyleService.update",
+      "label": "Method",
+      "name": "update",
+      "signature": "update(next: GraphStyleConfig): void"
+    },
+    {
+      "id": "/services/graph-style.service.ts#GraphStyleService.reset",
+      "label": "Method",
+      "name": "reset",
+      "signature": "reset(): void"
+    },
+    {
+      "id": "/services/graph-style.service.ts#GraphStyleService.nodeColor",
+      "label": "Method",
+      "name": "nodeColor",
+      "signature": "nodeColor(type: NodeTypeKey): ColorRgb"
+    },
+    {
+      "id": "/services/graph-style.service.ts#GraphStyleService.linkColor",
+      "label": "Method",
+      "name": "linkColor",
+      "signature": "linkColor(type: LinkTypeKey): ColorRgb"
+    },
+    {
+      "id": "/services/graph-style.service.ts#GraphStyleService.levelColor",
+      "label": "Method",
+      "name": "levelColor",
+      "signature": "levelColor(level: number): ColorHexRgb"
+    },
+    {
+      "id": "/services/graph-style.service.ts#buildDefaults",
+      "label": "Function",
+      "name": "buildDefaults",
+      "signature": "function buildDefaults(): GraphStyleConfig"
+    },
+    {
+      "id": "/services/graph-style.service.ts#mergeDeep",
+      "label": "Function",
+      "name": "mergeDeep",
+      "signature": "function mergeDeep<T>(base: T, patch: unknown): T"
+    },
+    {
+      "id": "/services/graph-style.service.ts#hexToRgb",
+      "label": "Function",
+      "name": "hexToRgb",
+      "signature": "export const hexToRgb = (hex: string): ColorRgb"
+    },
+    {
+      "id": "/services/graph-style.service.ts#rgbToHex",
+      "label": "Function",
+      "name": "rgbToHex",
+      "signature": "const rgbToHex = ({ r, g, b }: ColorRgb): string"
+    }
+  ],
+  "graph_edges": [
+    {
+      "source": "/services/graph-style.service.ts",
+      "target": "/src/core/graph.config.ts",
+      "relation": "depends_on"
+    },
+    {
+      "source": "/services/graph-style.service.ts",
+      "target": "/src/core/graph.model.ts",
+      "relation": "depends_on"
+    },
+    {
+      "source": "/services/graph-style.service.ts",
+      "target": "/src/core/graph.config.ts",
+      "relation": "imports"
+    }
+  ],
+  "metadata": {
+    "environment_variables": [],
+    "external_dependencies": [
+      "@angular/core",
+      "rxjs"
+    ],
+    "has_side_effects": true
+  }
+}

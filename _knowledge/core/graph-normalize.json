@@ -1,0 +1,79 @@
+{
+  "component": {
+    "name": "graph-normalize.ts",
+    "source_path": "/core/graph-normalize.ts",
+    "doc_path": "/core/graph-normalize.json",
+    "type": "module"
+  },
+  "vector_memory": {
+    "semantic_summary": "This module implements graph normalization, acting as a critical post-processing layer for raw graph data. Its primary functions include merging duplicate nodes, resolving internal documentation links specified in markdown, and cleaning up the graph structure by removing self-references and redundant edges. It consumes GraphData and outputs a NormalizeReport detailing cleanup metrics, ensuring subsequent analysis operates on a canonical dataset."
+  },
+  "graph_nodes": [
+    {
+      "id": "/core/graph-normalize.ts#DOC_RELATION",
+      "label": "Constant",
+      "name": "DOC_RELATION",
+      "signature": "string"
+    },
+    {
+      "id": "/core/graph-normalize.ts#NormalizeReport",
+      "label": "Interface",
+      "name": "NormalizeReport",
+      "signature": "interface { mergedDuplicates: number; addedDocLinks: number; unresolvedDocRefs: string[]; }"
+    },
+    {
+      "id": "/core/graph-normalize.ts#linkEnd",
+      "label": "Function",
+      "name": "linkEnd",
+      "signature": "const linkEnd = (end: string | GraphNode): string => (typeof end === 'object' ? end.id : end);"
+    },
+    {
+      "id": "/core/graph-normalize.ts#isPlaceholder",
+      "label": "Function",
+      "name": "isPlaceholder",
+      "signature": "const isPlaceholder = (n: GraphNode): boolean => n.group === PLACEHOLDER_GROUP && !n.raw_markdown;"
+    },
+    {
+      "id": "/core/graph-normalize.ts#normalizeRef",
+      "label": "Function",
+      "name": "normalizeRef",
+      "signature": "function normalizeRef(ref: string): string"
+    },
+    {
+      "id": "/core/graph-normalize.ts#createNodeResolver",
+      "label": "Function",
+      "name": "createNodeResolver",
+      "signature": "export function createNodeResolver(nodes: GraphNode[]): (label: string, href: string) => GraphNode | null"
+    },
+    {
+      "id": "/core/graph-normalize.ts#refSegments",
+      "label": "Function",
+      "name": "refSegments",
+      "signature": "export function refSegments(href: string): string[]"
+    },
+    {
+      "id": "/core/graph-normalize.ts#normalizeGraphData",
+      "label": "Function",
+      "name": "normalizeGraphData",
+      "signature": "export function normalizeGraphData(data: GraphData): NormalizeReport"
+    },
+    {
+      "id": "/core/graph-normalize.ts#countConnections",
+      "label": "Function",
+      "name": "countConnections",
+      "signature": "export function countConnections(data: GraphData): void"
+    }
+  ],
+  "graph_edges": [
+    {
+      "source": "/core/graph-normalize.ts",
+      "target": "/core/graph.model",
+      "relation": "imports"
+    }
+  ],
+  "metadata": {
+    "environment_variables": [],
+    "external_dependencies": [],
+    "has_side_effects": true
+  }
+}
