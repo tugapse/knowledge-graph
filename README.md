@@ -212,6 +212,12 @@ python3 -m unittest discover tests    # loader tests
 npm run build                         # → dist/knowledge-graph/browser
 ```
 
+## Built on
+
+- [3d-force-graph](https://github.com/vasturiano/3d-force-graph) by Vasco Asturiano does the heavy
+  lifting: the 3D scene, the force layout and the link particles, rendered with [three.js](https://threejs.org/).
+- [Angular](https://angular.dev/) for the client, and [marked](https://marked.js.org/) to render the docs in the inspector.
+
 ## What's next
 
 No big promises. The focus for now is:
