@@ -7,6 +7,8 @@
 A small 3D viewer for the project knowledge that [JARVIS AI](https://github.com/tugapse/ai) generates.
 Point it at the knowledge, fly around your codebase, click things.
 
+![The whole JARVIS codebase as a 3D graph, with subsystem badges floating over the scene](docs/screenshots/overview.png)
+
 ---
 
 ## Why
@@ -113,6 +115,8 @@ badge to focus it; the camera flies over and everything unrelated fades out. `Es
 signature, summary, and the two lists that matter most. *Depends on / Calls* is what this file
 needs; *Used by* is what breaks if you change it. Click any entry to jump there, and **Back** to
 return. The *Docs* tab is the Markdown JARVIS wrote for that file.
+
+![A node selected: its links fan out in the scene and the inspector shows its type, summary, connections, packages and env vars](docs/screenshots/inspector.png)
 
 **Search.** `/` or `Ctrl+K` anywhere. It matches names first, then keywords, summaries, types and
 cluster names, and tells you why each result matched.
