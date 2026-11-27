@@ -7,6 +7,8 @@
 A small 3D viewer for the project knowledge that [JARVIS AI](https://github.com/tugapse/ai) generates.
 Point it at the knowledge, fly around your codebase, click things.
 
+**[Live demo](https://tugapse.github.io/knowledge-graph/)**: the viewer running on this project's own knowledge, no install needed.
+
 ![The whole JARVIS codebase as a 3D graph, with subsystem badges floating over the scene](docs/screenshots/overview.png)
 
 ---
